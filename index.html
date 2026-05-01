@@ -1,0 +1,3393 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เครื่องคำนวณน้ำนมแม่ | รพ.สต.เกาะแต้ว</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink-50: #fdf4f3;
+    --pink-100: #fce8e6;
+    --pink-200: #f8cfc9;
+    --pink-300: #f0a99f;
+    --pink-400: #e57b6e;
+    --pink-500: #d05a4d;
+    --pink-600: #b8453a;
+    --cream: #fef9f3;
+    --cream-dark: #f5ead9;
+    --sage-100: #e8f0e6;
+    --sage-300: #a8c099;
+    --sage-500: #6b8e5a;
+    --sage-700: #3d5a32;
+    --gold: #c9a961;
+    --ink: #2a2520;
+    --ink-soft: #5a4f47;
+    --line: #e8dfd4;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --shadow-sm: 0 2px 4px rgba(58, 38, 32, 0.06);
+    --shadow-md: 0 8px 24px rgba(58, 38, 32, 0.08);
+    --shadow-lg: 0 20px 48px rgba(58, 38, 32, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.65;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(at 12% 8%, rgba(240, 169, 159, 0.12) 0px, transparent 50%),
+      radial-gradient(at 88% 92%, rgba(168, 192, 153, 0.10) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(201, 169, 97, 0.05) 0px, transparent 50%);
+  }
+
+  .container {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  /* ===== HEADER ===== */
+  .hero {
+    text-align: center;
+    padding: 32px 16px 40px;
+    position: relative;
+  }
+
+  .hero::before {
+    content: "🤱";
+    font-size: 56px;
+    display: block;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 4px 12px rgba(208, 90, 77, 0.2));
+  }
+
+  .hero h1 {
+    font-family: 'Prompt', sans-serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    color: var(--pink-600);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .hero .subtitle {
+    font-size: clamp(14px, 2.2vw, 17px);
+    color: var(--ink-soft);
+    max-width: 620px;
+    margin: 0 auto 12px;
+  }
+
+  .hero .badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: var(--sage-100);
+    color: var(--sage-700);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid rgba(168, 192, 153, 0.4);
+  }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex;
+    gap: 6px;
+    background: white;
+    padding: 6px;
+    border-radius: 16px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--line);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex: 1;
+    min-width: 130px;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 12px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+  }
+
+  .tab.active {
+    background: var(--pink-500);
+    color: white;
+    box-shadow: 0 4px 12px rgba(208, 90, 77, 0.3);
+  }
+
+  .tab:not(.active):hover {
+    background: var(--pink-50);
+    color: var(--pink-600);
+  }
+
+  /* ===== PANELS ===== */
+  .panel {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .panel.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: white;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--line);
+    margin-bottom: 20px;
+  }
+
+  .card h2 {
+    font-family: 'Prompt', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--pink-600);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card h2 .icon {
+    font-size: 26px;
+  }
+
+  .card .desc {
+    color: var(--ink-soft);
+    font-size: 14px;
+    margin-bottom: 22px;
+  }
+
+  /* ===== FORM ===== */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-group label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .form-group .hint {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-left: 6px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 12px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 16px;
+    color: var(--ink);
+    background: var(--cream);
+    transition: all 0.2s ease;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--pink-400);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(229, 123, 110, 0.1);
+  }
+
+  .radio-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 6px;
+  }
+
+  .radio-card {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .radio-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .radio-card .radio-box {
+    padding: 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    background: var(--cream);
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+
+  .radio-card .radio-box .emoji {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .radio-card .radio-box .title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  .radio-card .radio-box .sub {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .radio-card input[type="radio"]:checked + .radio-box {
+    border-color: var(--pink-400);
+    background: var(--pink-50);
+    box-shadow: 0 4px 12px rgba(229, 123, 110, 0.15);
+  }
+
+  .btn {
+    background: var(--pink-500);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-family: 'Prompt', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 24px;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(208, 90, 77, 0.25);
+  }
+
+  .btn:hover {
+    background: var(--pink-600);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(208, 90, 77, 0.35);
+  }
+
+  /* ===== RESULTS ===== */
+  .result {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+  .result.show { display: block; }
+
+  .result-hero {
+    background: linear-gradient(135deg, var(--pink-500) 0%, var(--pink-400) 100%);
+    color: white;
+    padding: 32px 28px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-hero::before {
+    content: "";
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.2), transparent);
+    border-radius: 50%;
+  }
+
+  .result-hero h3 {
+    font-family: 'Prompt', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    opacity: 0.92;
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  .result-hero .big-number {
+    font-family: 'Prompt', sans-serif;
+    font-size: clamp(38px, 8vw, 56px);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 6px;
+    position: relative;
+  }
+
+  .result-hero .big-number .unit {
+    font-size: 0.4em;
+    font-weight: 400;
+    opacity: 0.85;
+    margin-left: 8px;
+  }
+
+  .result-hero .meta {
+    font-size: 14px;
+    opacity: 0.92;
+    position: relative;
+  }
+
+  .result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: white;
+    padding: 18px;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .stat-card .label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .stat-card .value {
+    font-family: 'Prompt', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--pink-600);
+  }
+
+  .stat-card .value .small {
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--ink-soft);
+    margin-left: 4px;
+  }
+
+  /* ===== SCHEDULE TABLE ===== */
+  .schedule-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  .schedule-table th {
+    background: var(--cream-dark);
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--sage-700);
+    font-size: 13px;
+    border-bottom: 2px solid var(--line);
+  }
+
+  .schedule-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+  }
+
+  .schedule-table tr:last-child td { border-bottom: none; }
+
+  .schedule-table .time {
+    font-weight: 600;
+    color: var(--pink-600);
+    white-space: nowrap;
+  }
+
+  .schedule-table .feed-type {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .feed-direct {
+    background: var(--pink-100);
+    color: var(--pink-600);
+  }
+
+  .feed-stored {
+    background: var(--sage-100);
+    color: var(--sage-700);
+  }
+
+  .feed-pump {
+    background: #fef3c7;
+    color: #b45309;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+  }
+
+  /* ===== STORAGE GRID ===== */
+  .storage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .storage-card {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1.5px solid var(--line);
+    transition: all 0.2s ease;
+  }
+
+  .storage-card:hover {
+    border-color: var(--pink-300);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .storage-card .top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .storage-card .ico {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+
+  .storage-card .place {
+    font-family: 'Prompt', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+
+  .storage-card .temp {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .storage-card .duration {
+    font-family: 'Prompt', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--pink-500);
+    margin-bottom: 4px;
+  }
+
+  .storage-card .note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* ===== STEPS ===== */
+  .steps {
+    counter-reset: step;
+    list-style: none;
+  }
+
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px dashed var(--line);
+    align-items: flex-start;
+  }
+
+  .steps li:last-child { border-bottom: none; }
+
+  .steps li::before {
+    content: counter(step);
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: var(--pink-100);
+    color: var(--pink-600);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Prompt', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    border: 2px solid var(--pink-200);
+  }
+
+  .steps li .step-content strong {
+    display: block;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .steps li .step-content {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    padding-top: 4px;
+  }
+
+  /* ===== ALERT ===== */
+  .alert {
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin: 16px 0;
+    border-left: 4px solid;
+    font-size: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .alert-info {
+    background: #eff6ff;
+    border-color: #3b82f6;
+    color: #1e40af;
+  }
+
+  .alert-warning {
+    background: #fffbeb;
+    border-color: var(--warning);
+    color: #92400e;
+  }
+
+  .alert-success {
+    background: var(--sage-100);
+    border-color: var(--sage-500);
+    color: var(--sage-700);
+  }
+
+  .alert .alert-ico {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  /* ===== TIPS LIST ===== */
+  .tips-list {
+    list-style: none;
+  }
+
+  .tips-list li {
+    padding: 10px 0 10px 32px;
+    position: relative;
+    border-bottom: 1px dashed var(--line);
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  .tips-list li:last-child { border-bottom: none; }
+
+  .tips-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 22px;
+    height: 22px;
+    background: var(--sage-300);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* ===== THAI FOOD CARDS ===== */
+  .herb-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+  }
+
+  .herb-card {
+    background: linear-gradient(135deg, #fef9f3 0%, #fff 100%);
+    padding: 22px;
+    border-radius: 18px;
+    border: 1.5px solid var(--line);
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .herb-card::before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(168, 192, 153, 0.15), transparent);
+    border-radius: 50%;
+  }
+
+  .herb-card:hover {
+    border-color: var(--sage-300);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .herb-card .herb-emoji {
+    font-size: 42px;
+    line-height: 1;
+    margin-bottom: 10px;
+    display: block;
+    position: relative;
+  }
+
+  .herb-card h3 {
+    font-family: 'Prompt', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--pink-600);
+    margin-bottom: 6px;
+    position: relative;
+  }
+
+  .herb-card .scientific {
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-bottom: 12px;
+    letter-spacing: 0.02em;
+  }
+
+  .herb-card .benefit {
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.6;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  .herb-card .nutrients {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .herb-card .nutrient-tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: var(--sage-100);
+    color: var(--sage-700);
+    border-radius: 999px;
+    font-weight: 500;
+  }
+
+  .herb-card .menu-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sage-700);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .herb-card .menu-list {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  /* Recipe section */
+  .recipe-card {
+    background: var(--cream);
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 16px;
+    border: 1.5px solid var(--cream-dark);
+  }
+
+  .recipe-card h3 {
+    font-family: 'Prompt', sans-serif;
+    font-size: 18px;
+    color: var(--pink-600);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .recipe-card .recipe-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  .recipe-card .recipe-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .recipe-section {
+    margin-top: 14px;
+  }
+
+  .recipe-section .label-mini {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sage-700);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+
+  .ingredient-list {
+    list-style: none;
+    margin-bottom: 8px;
+  }
+
+  .ingredient-list li {
+    padding: 6px 0 6px 22px;
+    position: relative;
+    font-size: 13px;
+    color: var(--ink);
+  }
+
+  .ingredient-list li::before {
+    content: "•";
+    position: absolute;
+    left: 6px;
+    color: var(--sage-500);
+    font-weight: 700;
+  }
+
+  .recipe-toggle {
+    background: var(--pink-50);
+    color: var(--pink-600);
+    border: 1.5px solid var(--pink-200);
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+    width: 100%;
+    transition: all 0.2s ease;
+  }
+
+  .recipe-toggle:hover {
+    background: var(--pink-100);
+  }
+
+  .recipe-detail {
+    display: none;
+    margin-top: 14px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .recipe-detail.show { display: block; }
+
+  /* Daily meal plan */
+  .meal-plan {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+  }
+
+  .meal-slot {
+    background: white;
+    border-radius: 14px;
+    padding: 18px;
+    border: 1.5px solid var(--line);
+    border-top: 4px solid var(--pink-400);
+  }
+
+  .meal-slot.breakfast { border-top-color: #f59e0b; }
+  .meal-slot.lunch { border-top-color: var(--sage-500); }
+  .meal-slot.dinner { border-top-color: var(--pink-500); }
+  .meal-slot.snack { border-top-color: var(--gold); }
+
+  .meal-slot .meal-time {
+    font-family: 'Prompt', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+
+  .meal-slot .meal-name {
+    font-family: 'Prompt', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .meal-slot .meal-desc {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  /* Avoid section */
+  .avoid-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .avoid-card {
+    background: #fef2f2;
+    border: 1.5px solid #fecaca;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .avoid-card .avoid-emoji {
+    font-size: 32px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .avoid-card .avoid-name {
+    font-weight: 600;
+    color: #b91c1c;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .avoid-card .avoid-reason {
+    font-size: 12px;
+    color: #7f1d1d;
+    line-height: 1.5;
+  }
+
+  /* ===== PRINT MODAL ===== */
+  .print-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--pink-500);
+    color: white;
+    border: none;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(208, 90, 77, 0.4);
+    z-index: 100;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .print-fab:hover {
+    transform: scale(1.1);
+    background: var(--pink-600);
+  }
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(42, 37, 32, 0.65);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.25s ease;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.3s ease;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--cream-dark);
+  }
+
+  .modal h2 {
+    font-family: 'Prompt', sans-serif;
+    font-size: 22px;
+    color: var(--pink-600);
+    margin-bottom: 4px;
+  }
+
+  .modal .modal-desc {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+
+  .modal-close {
+    background: var(--cream);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    flex-shrink: 0;
+  }
+
+  .doc-options {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .doc-option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--cream);
+  }
+
+  .doc-option:hover {
+    border-color: var(--pink-300);
+    background: white;
+  }
+
+  .doc-option input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--pink-500);
+  }
+
+  .doc-option .doc-icon {
+    font-size: 28px;
+  }
+
+  .doc-option .doc-info {
+    flex: 1;
+  }
+
+  .doc-option .doc-title {
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 14px;
+  }
+
+  .doc-option .doc-sub {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+  }
+
+  .doc-option.checked {
+    border-color: var(--pink-400);
+    background: var(--pink-50);
+  }
+
+  .modal .form-grid {
+    margin-top: 6px;
+  }
+
+  /* ===== PRINT-ONLY DOCUMENTS (hidden on screen) ===== */
+  .print-area {
+    display: none;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    text-align: center;
+    padding: 32px 16px 16px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    border-top: 1px solid var(--line);
+    margin-top: 40px;
+  }
+
+  .footer .ref {
+    margin-top: 8px;
+    font-size: 12px;
+    opacity: 0.75;
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    .container { padding: 16px 12px 40px; }
+    .card { padding: 20px 18px; border-radius: 16px; }
+    .result-hero { padding: 24px 20px; }
+    .form-grid { grid-template-columns: 1fr; gap: 14px; }
+    .tab { padding: 10px 12px; font-size: 13px; min-width: 110px; }
+    .hero { padding: 16px 8px 24px; }
+    .hero::before { font-size: 44px; }
+  }
+
+  @media (min-width: 768px) {
+    .form-grid.two-col { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Print */
+  @media print {
+    @page {
+      size: A4;
+      margin: 1.2cm;
+    }
+
+    body {
+      background: white !important;
+      font-size: 12pt;
+      color: #000 !important;
+    }
+
+    body * {
+      visibility: hidden;
+    }
+
+    .print-area, .print-area * {
+      visibility: visible;
+    }
+
+    .print-area {
+      display: block !important;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+
+    .print-page {
+      page-break-after: always;
+      padding: 0;
+      background: white;
+    }
+
+    .print-page:last-child {
+      page-break-after: auto;
+    }
+
+    .print-header {
+      border-bottom: 3px solid #d05a4d;
+      padding-bottom: 12pt;
+      margin-bottom: 16pt;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .print-header .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10pt;
+    }
+
+    .print-header .logo {
+      font-size: 32pt;
+    }
+
+    .print-header h1 {
+      font-family: 'Prompt', sans-serif;
+      font-size: 18pt;
+      color: #b8453a;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .print-header .subtitle {
+      font-size: 10pt;
+      color: #666;
+      margin-top: 2pt;
+    }
+
+    .print-header .meta {
+      text-align: right;
+      font-size: 9pt;
+      color: #666;
+    }
+
+    .print-area h2 {
+      font-family: 'Prompt', sans-serif;
+      font-size: 14pt;
+      color: #b8453a;
+      margin: 14pt 0 8pt 0;
+      padding-bottom: 4pt;
+      border-bottom: 1pt solid #e8dfd4;
+    }
+
+    .print-area h3 {
+      font-family: 'Prompt', sans-serif;
+      font-size: 12pt;
+      color: #3d5a32;
+      margin: 10pt 0 6pt 0;
+    }
+
+    .print-area p, .print-area li, .print-area td {
+      font-size: 11pt;
+      line-height: 1.6;
+      color: #2a2520;
+    }
+
+    .patient-info {
+      background: #fef9f3;
+      border: 1pt solid #e8dfd4;
+      border-radius: 6pt;
+      padding: 10pt 14pt;
+      margin-bottom: 14pt;
+      font-size: 10pt;
+    }
+
+    .patient-info .info-row {
+      display: flex;
+      gap: 20pt;
+      margin-bottom: 4pt;
+    }
+
+    .patient-info strong {
+      color: #b8453a;
+      min-width: 80pt;
+      display: inline-block;
+    }
+
+    .print-result-box {
+      background: #fdf4f3;
+      border: 2pt solid #f0a99f;
+      border-radius: 8pt;
+      padding: 16pt;
+      margin: 12pt 0;
+      text-align: center;
+    }
+
+    .print-result-box .label {
+      font-size: 10pt;
+      color: #666;
+    }
+
+    .print-result-box .big {
+      font-family: 'Prompt', sans-serif;
+      font-size: 28pt;
+      font-weight: 700;
+      color: #b8453a;
+      margin: 4pt 0;
+    }
+
+    .print-stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8pt;
+      margin: 10pt 0;
+    }
+
+    .print-stat {
+      border: 1pt solid #e8dfd4;
+      padding: 8pt;
+      border-radius: 4pt;
+      text-align: center;
+    }
+
+    .print-stat .lbl {
+      font-size: 9pt;
+      color: #666;
+    }
+
+    .print-stat .val {
+      font-family: 'Prompt', sans-serif;
+      font-size: 14pt;
+      font-weight: 700;
+      color: #b8453a;
+    }
+
+    .print-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8pt;
+      font-size: 10pt;
+    }
+
+    .print-table th {
+      background: #fdf4f3;
+      border: 1pt solid #e8dfd4;
+      padding: 6pt;
+      text-align: left;
+      font-weight: 600;
+      color: #b8453a;
+    }
+
+    .print-table td {
+      border: 1pt solid #e8dfd4;
+      padding: 6pt;
+    }
+
+    .print-storage-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8pt;
+      margin-top: 8pt;
+    }
+
+    .print-storage-item {
+      border: 1pt solid #e8dfd4;
+      padding: 8pt 10pt;
+      border-radius: 4pt;
+      page-break-inside: avoid;
+    }
+
+    .print-storage-item .place {
+      font-weight: 600;
+      font-size: 11pt;
+      color: #3d5a32;
+    }
+
+    .print-storage-item .duration {
+      font-family: 'Prompt', sans-serif;
+      font-size: 16pt;
+      font-weight: 700;
+      color: #b8453a;
+      margin: 2pt 0;
+    }
+
+    .print-storage-item .note {
+      font-size: 9pt;
+      color: #666;
+    }
+
+    .print-meal-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8pt;
+      margin-top: 8pt;
+    }
+
+    .print-meal {
+      border: 1pt solid #e8dfd4;
+      padding: 8pt;
+      border-radius: 4pt;
+      page-break-inside: avoid;
+    }
+
+    .print-meal .time {
+      font-weight: 600;
+      color: #b8453a;
+      font-size: 10pt;
+    }
+
+    .print-meal ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 4pt;
+      font-size: 9pt;
+    }
+
+    .print-herbs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8pt;
+    }
+
+    .print-herb {
+      border: 1pt solid #e8dfd4;
+      padding: 8pt 10pt;
+      border-radius: 4pt;
+      page-break-inside: avoid;
+    }
+
+    .print-herb .name {
+      font-weight: 700;
+      color: #b8453a;
+      font-size: 11pt;
+    }
+
+    .print-herb .desc {
+      font-size: 9pt;
+      color: #2a2520;
+      margin-top: 2pt;
+    }
+
+    .print-footer {
+      margin-top: 20pt;
+      padding-top: 8pt;
+      border-top: 1pt solid #e8dfd4;
+      font-size: 8pt;
+      color: #888;
+      text-align: center;
+    }
+
+    .print-warning {
+      background: #fffbeb;
+      border-left: 3pt solid #d97706;
+      padding: 8pt 12pt;
+      margin: 10pt 0;
+      font-size: 9pt;
+      page-break-inside: avoid;
+    }
+
+    .print-tips-list {
+      padding-left: 16pt;
+      font-size: 10pt;
+    }
+
+    .print-tips-list li {
+      margin-bottom: 4pt;
+    }
+
+    /* Hide UI elements when printing */
+    .tabs, .btn, .footer, .print-fab, .modal-overlay, .hero { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>เครื่องคำนวณน้ำนมแม่</h1>
+    <p class="subtitle">คำนวณปริมาณน้ำนมแม่ที่ทารกควรได้รับ ตั้งแต่แรกเกิดถึง 2 ปี<br>พร้อมคำแนะนำการเก็บรักษาและตารางการให้นมที่เหมาะสม</p>
+    <span class="badge">🏥 รพ.สต.เกาะแต้ว · อิงข้อมูลกรมอนามัย กระทรวงสาธารณสุข & WHO/UNICEF</span>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-panel="calc" role="tab">🧮 คำนวณนม</button>
+    <button class="tab" data-panel="schedule" role="tab">📅 ตารางเวลา</button>
+    <button class="tab" data-panel="storage" role="tab">🧊 การเก็บรักษา</button>
+    <button class="tab" data-panel="usage" role="tab">🍼 การนำมาใช้</button>
+    <button class="tab" data-panel="thaifood" role="tab">🌿 อาหารเพิ่มน้ำนม</button>
+    <button class="tab" data-panel="tips" role="tab">💡 คำแนะนำ</button>
+  </div>
+
+  <!-- =========================== PANEL 1: CALCULATOR =========================== -->
+  <div class="panel active" id="panel-calc">
+    <div class="card">
+      <h2><span class="icon">👶</span> ข้อมูลทารกและคุณแม่</h2>
+      <p class="desc">กรุณากรอกข้อมูลเพื่อคำนวณปริมาณน้ำนมและจัดตารางการให้นมที่เหมาะสม</p>
+
+      <div class="form-grid two-col">
+        <div class="form-group">
+          <label>อายุของทารก</label>
+          <select id="ageGroup">
+            <option value="0">แรกเกิด (วันที่ 1)</option>
+            <option value="1">อายุ 2-3 วัน</option>
+            <option value="2">อายุ 4-7 วัน (1 สัปดาห์)</option>
+            <option value="3">อายุ 2 สัปดาห์</option>
+            <option value="4" selected>อายุ 1 เดือน</option>
+            <option value="5">อายุ 2 เดือน</option>
+            <option value="6">อายุ 3 เดือน</option>
+            <option value="7">อายุ 4 เดือน</option>
+            <option value="8">อายุ 5 เดือน</option>
+            <option value="9">อายุ 6 เดือน (เริ่มอาหารเสริม)</option>
+            <option value="10">อายุ 7-9 เดือน</option>
+            <option value="11">อายุ 9-12 เดือน</option>
+            <option value="12">อายุ 1-2 ปี</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>น้ำหนักทารก <span class="hint">(กิโลกรัม)</span></label>
+          <input type="number" id="weight" value="4" min="1" max="20" step="0.1">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top: 20px;">
+        <label>รูปแบบการเลี้ยงลูกด้วยนมแม่</label>
+        <div class="radio-group">
+          <label class="radio-card">
+            <input type="radio" name="motherType" value="exclusive" checked>
+            <div class="radio-box">
+              <span class="emoji">🤱</span>
+              <div class="title">นมแม่อย่างเดียว</div>
+              <div class="sub">แม่อยู่บ้านเลี้ยงลูก</div>
+            </div>
+          </label>
+          <label class="radio-card">
+            <input type="radio" name="motherType" value="working">
+            <div class="radio-box">
+              <span class="emoji">💼</span>
+              <div class="title">แม่ทำงาน</div>
+              <div class="sub">ต้องปั๊มเก็บสต็อก</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div id="workingFields" style="display:none; margin-top: 20px;">
+        <div class="form-grid two-col">
+          <div class="form-group">
+            <label>เวลาที่แม่ออกจากบ้าน <span class="hint">(เช่น 07:00)</span></label>
+            <input type="time" id="leaveTime" value="07:00">
+          </div>
+          <div class="form-group">
+            <label>เวลาที่แม่กลับถึงบ้าน <span class="hint">(เช่น 17:00)</span></label>
+            <input type="time" id="returnTime" value="17:00">
+          </div>
+        </div>
+      </div>
+
+      <button class="btn" id="calcBtn">คำนวณ</button>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="result" id="results">
+
+      <div class="result-hero">
+        <h3>ปริมาณน้ำนมที่ทารกควรได้รับต่อวัน</h3>
+        <div class="big-number" id="totalDaily">0 <span class="unit">มล./วัน</span></div>
+        <div class="meta" id="totalOz">≈ 0 ออนซ์ต่อวัน</div>
+      </div>
+
+      <div class="result-grid">
+        <div class="stat-card">
+          <div class="label">มื้อต่อวัน</div>
+          <div class="value" id="meals">0 <span class="small">มื้อ</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="label">ปริมาณ/มื้อ</div>
+          <div class="value" id="perMeal">0 <span class="small">มล.</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="label">ระยะห่างมื้อ</div>
+          <div class="value" id="interval">0 <span class="small">ชม.</span></div>
+        </div>
+        <div class="stat-card">
+          <div class="label">ปริมาณ/ออนซ์</div>
+          <div class="value" id="perMealOz">0 <span class="small">ออนซ์</span></div>
+        </div>
+      </div>
+
+      <div id="exclusiveAdvice" style="display:none;">
+        <div class="card">
+          <h2><span class="icon">🤱</span> คำแนะนำสำหรับคุณแม่ที่ให้นมแม่อย่างเดียว</h2>
+          <ul class="tips-list" id="exclusiveTips"></ul>
+        </div>
+      </div>
+
+      <div id="workingAdvice" style="display:none;">
+        <div class="card">
+          <h2><span class="icon">💼</span> แผนการสต็อกนมสำหรับคุณแม่ทำงาน</h2>
+          <p class="desc">คำนวณจากเวลาที่คุณแม่ไม่อยู่กับลูก</p>
+
+          <div class="result-grid">
+            <div class="stat-card">
+              <div class="label">เวลาห่างจากลูก</div>
+              <div class="value" id="awayHours">0 <span class="small">ชม.</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="label">มื้อที่ต้องสต็อก</div>
+              <div class="value" id="stockMeals">0 <span class="small">มื้อ</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="label">ปริมาณสต็อกต่อวัน</div>
+              <div class="value" id="stockDaily">0 <span class="small">มล.</span></div>
+            </div>
+            <div class="stat-card">
+              <div class="label">ครั้งที่ต้องปั๊มที่ทำงาน</div>
+              <div class="value" id="pumpCount">0 <span class="small">ครั้ง</span></div>
+            </div>
+          </div>
+
+          <div class="alert alert-info" style="margin-top: 16px;">
+            <span class="alert-ico">💡</span>
+            <div>
+              <strong>เคล็ดลับการปั๊มที่ทำงาน:</strong> ควรปั๊มทุก 3 ชั่วโมงเพื่อรักษาปริมาณน้ำนม โดยใช้เวลาปั๊มข้างละ 15-20 นาที และเก็บในถุงเก็บน้ำนมที่สะอาด ติดฉลากวันเวลาให้ชัดเจน
+            </div>
+          </div>
+
+          <ul class="tips-list" id="workingTips"></ul>
+        </div>
+      </div>
+
+      <div class="alert alert-warning">
+        <span class="alert-ico">⚠️</span>
+        <div>
+          <strong>หมายเหตุ:</strong> ค่าที่คำนวณเป็นค่าเฉลี่ยอ้างอิงตามหลักวิชาการ ทารกแต่ละคนมีความต้องการต่างกัน ±2-4 ออนซ์ ควรสังเกตสัญญาณความหิว/อิ่มของลูกและการเพิ่มน้ำหนักตามเกณฑ์ (โดยปกติเด็กจะน้ำหนักขึ้น 20-60 กรัม/วัน) หากมีข้อสงสัยกรุณาปรึกษาเจ้าหน้าที่สาธารณสุขหรือกุมารแพทย์
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================== PANEL 2: SCHEDULE =========================== -->
+  <div class="panel" id="panel-schedule">
+    <div class="card">
+      <h2><span class="icon">📅</span> ตารางเวลาการให้นม 24 ชั่วโมง</h2>
+      <p class="desc">ตารางเวลาที่แนะนำตามอายุของลูกและรูปแบบการให้นม กรุณากรอกข้อมูลในแท็บคำนวณก่อน</p>
+
+      <div id="scheduleContent">
+        <div class="alert alert-info">
+          <span class="alert-ico">ℹ️</span>
+          <div>กรุณากรอกข้อมูลในแท็บ "คำนวณนม" ก่อน เพื่อสร้างตารางเวลาที่เหมาะสมกับลูกของคุณ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================== PANEL 3: STORAGE =========================== -->
+  <div class="panel" id="panel-storage">
+    <div class="card">
+      <h2><span class="icon">🧊</span> ระยะเวลาการเก็บรักษานมแม่</h2>
+      <p class="desc">อิงตามคำแนะนำ UNICEF, WHO และกรมอนามัย กระทรวงสาธารณสุข</p>
+
+      <div class="storage-grid">
+        <div class="storage-card">
+          <div class="top">
+            <span class="ico">🌡️</span>
+            <div>
+              <div class="place">อุณหภูมิห้อง</div>
+              <div class="temp">มากกว่า 25°C</div>
+            </div>
+          </div>
+          <div class="duration">1 ชั่วโมง</div>
+          <div class="note">ในสภาพอากาศร้อน ควรนำเข้าตู้เย็นทันทีเพื่อลดเสี่ยงเชื้อโรค</div>
+        </div>
+
+        <div class="storage-card">
+          <div class="top">
+            <span class="ico">❄️</span>
+            <div>
+              <div class="place">ห้องแอร์/อุณหภูมิห้อง</div>
+              <div class="temp">ต่ำกว่า 25°C</div>
+            </div>
+          </div>
+          <div class="duration">4 ชั่วโมง</div>
+          <div class="note">เหมาะกับนมที่เพิ่งปั๊มและจะให้ลูกในมื้อถัดไป</div>
+        </div>
+
+        <div class="storage-card">
+          <div class="top">
+            <span class="ico">🧊</span>
+            <div>
+              <div class="place">กระติกน้ำแข็ง</div>
+              <div class="temp">ต่ำกว่า 15°C</div>
+            </div>
+          </div>
+          <div class="duration">24 ชั่วโมง</div>
+          <div class="note">เหมาะสำหรับขนกลับบ้านจากที่ทำงาน ต้องมีน้ำแข็งหล่อตลอด</div>
+        </div>
+
+        <div class="storage-card">
+          <div class="top">
+            <span class="ico">🥶</span>
+            <div>
+              <div class="place">ตู้เย็นช่องธรรมดา</div>
+              <div class="temp">2-4°C</div>
+            </div>
+          </div>
+          <div class="duration">3-5 วัน</div>
+          <div class="note">เก็บด้านในสุดของตู้เย็น ไม่เก็บที่ประตูเพราะอุณหภูมิไม่คงที่</div>
+        </div>
+
+        <div class="storage-card">
+          <div class="top">
+            <span class="ico">🌨️</span>
+            <div>
+              <div class="place">ช่องแช่แข็ง (ตู้ประตูเดียว)</div>
+              <div class="temp">-10 ถึง -15°C</div>
+            </div>
+          </div>
+          <div class="duration">2 สัปดาห์</div>
+          <div class="note">แช่แข็งทันทีหลังปั๊มเพื่อรักษาคุณค่าสารอาหาร</div>
+        </div>
+
+        <div class="storage-card">
+          <div class="top">
+            <span class="ico">⛄</span>
+            <div>
+              <div class="place">ช่องแช่แข็ง (ตู้ 2 ประตู)</div>
+              <div class="temp">-18 ถึง -20°C</div>
+            </div>
+          </div>
+          <div class="duration">3 เดือน</div>
+          <div class="note">เก็บด้านในที่อุณหภูมิคงที่ ไม่ใกล้ประตูช่องแช่แข็ง</div>
+        </div>
+
+        <div class="storage-card">
+          <div class="top">
+            <span class="ico">🏔️</span>
+            <div>
+              <div class="place">ตู้แช่แข็งโดยเฉพาะ</div>
+              <div class="temp">ต่ำกว่า -20°C</div>
+            </div>
+          </div>
+          <div class="duration">6-12 เดือน</div>
+          <div class="note">เหมาะสำหรับการสต็อกระยะยาว รักษาคุณค่าได้ดีที่สุด</div>
+        </div>
+
+        <div class="storage-card">
+          <div class="top">
+            <span class="ico">💧</span>
+            <div>
+              <div class="place">นมที่ละลายแล้ว</div>
+              <div class="temp">ในตู้เย็น 2-4°C</div>
+            </div>
+          </div>
+          <div class="duration">24 ชั่วโมง</div>
+          <div class="note">⚠️ ห้ามนำกลับไปแช่แข็งใหม่ และนมที่ลูกกินแล้วไม่ควรเก็บอีก</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">📦</span> วิธีการเก็บนมแม่ที่ถูกต้อง</h2>
+      <ol class="steps">
+        <li>
+          <div class="step-content">
+            <strong>ล้างมือให้สะอาดทุกครั้ง</strong>
+            ก่อนปั๊มหรือบีบน้ำนม ล้างด้วยน้ำและสบู่อย่างน้อย 20 วินาที พร้อมเช็ดให้แห้ง
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>เตรียมภาชนะที่สะอาด</strong>
+            ใช้ถุงเก็บน้ำนมแม่หรือขวดแก้วที่ฆ่าเชื้อแล้ว แบ่งเก็บปริมาณพอดี 1 มื้อ (2-4 ออนซ์)
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>เขียนฉลากให้ชัดเจน</strong>
+            ระบุ วัน-เดือน-ปี และเวลาที่ปั๊ม หากนำไปฝากให้คนอื่นป้อน ให้เขียนชื่อทารกด้วย
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>เหลือพื้นที่ในภาชนะ</strong>
+            ในขวด: เหลือที่ว่าง ¼ - ½ นิ้ว / ในถุง: เหลือที่เผื่ออากาศ เพราะนมจะขยายตัวเมื่อแช่แข็ง
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>แช่ในส่วนเย็นที่สุด</strong>
+            ในตู้เย็น: เก็บด้านในสุดติดช่องแช่แข็ง / ห้ามเก็บที่ประตูตู้เย็นเพราะอุณหภูมิเปลี่ยนแปลงบ่อย
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>แยกจากอาหารอื่น</strong>
+            ป้องกันกลิ่นปนเปื้อนและการปนเปื้อนข้าม ปิดฝาให้สนิททุกครั้ง
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>ใช้ FIFO (First In, First Out)</strong>
+            นำนมที่ปั๊มก่อนมาใช้ก่อน เพื่อไม่ให้หมดอายุและรักษาคุณภาพ
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- =========================== PANEL 4: USAGE =========================== -->
+  <div class="panel" id="panel-usage">
+    <div class="card">
+      <h2><span class="icon">🍼</span> ขั้นตอนการนำนมแม่มาใช้งาน</h2>
+      <p class="desc">วิธีการละลายและอุ่นนมแม่ที่ถูกต้อง เพื่อรักษาคุณค่าสารอาหารและเอนไซม์</p>
+
+      <h3 style="font-family: 'Prompt'; color: var(--sage-700); margin: 20px 0 12px; font-size: 17px;">🔥 การละลายนมแช่แข็ง</h3>
+      <ol class="steps">
+        <li>
+          <div class="step-content">
+            <strong>ย้ายลงช่องเย็นธรรมดา 12 ชั่วโมงก่อนใช้</strong>
+            วิธีที่ดีที่สุด ย้ายนมแช่แข็งจากช่อง freezer ลงช่องเย็นธรรมดา (ในตู้เย็น) ค้างคืน นมจะละลายอย่างช้าๆ รักษาคุณภาพได้ดีที่สุด
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>หรือแช่ในน้ำอุณหภูมิห้อง</strong>
+            หากต้องการเร่งด่วน ให้แช่ถุงนมในน้ำอุณหภูมิห้องหรือน้ำอุ่น (ไม่ร้อน) ประมาณ 10-15 นาที
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>เขย่า/แกว่งเบาๆ ให้เข้ากัน</strong>
+            นมแม่ที่เก็บไว้จะแยกชั้น ไขมันจะลอยขึ้นด้านบน แกว่งเบาๆ ให้เข้ากัน ห้ามเขย่าแรงเพราะจะทำลายเซลล์ภูมิคุ้มกัน
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>ตรวจสอบอุณหภูมิ</strong>
+            หยดนมที่หลังมือ ควรรู้สึกอุ่นพอเหมาะหรือเย็นเล็กน้อย ไม่ร้อน
+          </div>
+        </li>
+      </ol>
+
+      <div class="alert alert-warning" style="margin-top: 20px;">
+        <span class="alert-ico">⚠️</span>
+        <div>
+          <strong>ห้าม:</strong> ละลายนมในน้ำเดือดหรือไมโครเวฟ เพราะจะทำลายเอนไซม์ เม็ดเลือดขาวและสารภูมิคุ้มกันในนมแม่ และอาจทำให้ลูกถูกลวกจาก hot spot ในนมได้
+        </div>
+      </div>
+
+      <h3 style="font-family: 'Prompt'; color: var(--sage-700); margin: 28px 0 12px; font-size: 17px;">♨️ การอุ่นนมจากตู้เย็น</h3>
+      <ol class="steps">
+        <li>
+          <div class="step-content">
+            <strong>นำนมออกจากตู้เย็น</strong>
+            แบ่งปริมาณตามที่ลูกจะกินในมื้อนั้น (ไม่ควรอุ่นทั้งขวดถ้ากินไม่หมด)
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>แช่ในน้ำอุ่น</strong>
+            แช่ขวดในน้ำอุ่น (ไม่เกิน 40°C) ประมาณ 5-10 นาที หรือใช้เครื่องอุ่นนมที่ตั้งอุณหภูมิได้
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>ทดสอบอุณหภูมิก่อนป้อน</strong>
+            หยดนมที่ข้อมือ ควรรู้สึกอุ่นพอเหมาะ ไม่ร้อน
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <strong>ป้อนลูกภายใน 1-2 ชั่วโมง</strong>
+            หลังอุ่นแล้วต้องใช้ภายใน 1-2 ชั่วโมง หากเหลือต้องทิ้ง ห้ามนำกลับไปแช่อีก
+          </div>
+        </li>
+      </ol>
+
+      <h3 style="font-family: 'Prompt'; color: var(--sage-700); margin: 28px 0 12px; font-size: 17px;">📋 ข้อควรรู้สำคัญ</h3>
+      <ul class="tips-list">
+        <li>นมที่ละลายแล้ว <strong>ห้ามนำกลับไปแช่แข็งใหม่</strong> เด็ดขาด เพราะคุณภาพจะลดลงและเสี่ยงเชื้อโรค</li>
+        <li>นมที่ลูกกินไปแล้วบางส่วน <strong>ไม่ควรเก็บไว้กินมื้อถัดไป</strong> เพราะมีน้ำลายลูกปนเปื้อน</li>
+        <li>นมแม่ที่เก็บไว้อาจมี <strong>กลิ่นเหม็นหืน</strong> เกิดจากเอนไซม์ไลเปสในนม ลูกส่วนใหญ่ยังกินได้ปกติ ไม่อันตราย</li>
+        <li>นมที่ละลายแล้วไม่ได้อุ่น <strong>เก็บในตู้เย็นได้ 24 ชั่วโมง</strong></li>
+        <li>หากต้องเก็บที่ทำงานเพื่อนำกลับบ้าน ใช้กระติกที่มีน้ำแข็งหล่อตลอด</li>
+        <li>นมแม่ไม่จำเป็นต้องอุ่นทุกครั้ง <strong>ลูกสามารถกินนมเย็นได้</strong> ที่อุณหภูมิห้อง</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- =========================== PANEL: THAI FOOD =========================== -->
+  <div class="panel" id="panel-thaifood">
+    <div class="card">
+      <h2><span class="icon">🌿</span> สมุนไพรและอาหารไทยเพิ่มน้ำนมแม่</h2>
+      <p class="desc">ภูมิปัญญาไทยจากกรมอนามัย กระทรวงสาธารณสุข • รักษาด้วยอาหารใกล้ตัว ปลอดภัย ราคาประหยัด</p>
+
+      <div class="alert alert-success">
+        <span class="alert-ico">🌾</span>
+        <div>
+          <strong>หลักการของไทย:</strong> "อาหารเป็นยา" คุณแม่หลังคลอดควรกินอาหารที่มีฤทธิ์ร้อน (อบอุ่นร่างกาย) เพื่อกระตุ้นการไหลเวียนเลือดและการสร้างน้ำนม หลีกเลี่ยงอาหารเย็น น้ำเย็น ของหมักดอง
+        </div>
+      </div>
+
+      <div class="herb-grid" style="margin-top: 24px;">
+
+        <div class="herb-card">
+          <span class="herb-emoji">🌺</span>
+          <h3>หัวปลี (ปลีกล้วย)</h3>
+          <div class="scientific">Musa sapientum L. — ราชาแห่งสมุนไพรเพิ่มน้ำนม</div>
+          <div class="benefit">มีสาร <strong>Lactagogum</strong> กระตุ้นฮอร์โมน Oxytocin และ Prolactin ที่สำคัญในการสร้างน้ำนม แคลเซียมสูงกว่ากล้วยสุก 4 เท่า</div>
+          <div class="nutrients">
+            <span class="nutrient-tag">แคลเซียม</span>
+            <span class="nutrient-tag">ธาตุเหล็ก</span>
+            <span class="nutrient-tag">ฟอสฟอรัส</span>
+            <span class="nutrient-tag">วิตามิน C</span>
+            <span class="nutrient-tag">เบต้าแคโรทีน</span>
+          </div>
+          <div class="menu-title">🍲 เมนูแนะนำ</div>
+          <div class="menu-list">แกงเลียงหัวปลี • ยำหัวปลีกุ้งสด • ทอดมันหัวปลี • หัวปลีผัดวุ้นเส้น • หัวปลีลวกจิ้มน้ำพริก</div>
+        </div>
+
+        <div class="herb-card">
+          <span class="herb-emoji">🌱</span>
+          <h3>ขิง</h3>
+          <div class="scientific">Zingiber officinale — สมุนไพรฤทธิ์ร้อน</div>
+          <div class="benefit">เพิ่มการไหลเวียนเลือด ทำให้น้ำนมไหลดี ขับลม แก้ท้องอืด ช่วยให้ร่างกายอบอุ่น เด็กที่ได้รับผ่านน้ำนมแม่จะลดท้องอืดได้ด้วย</div>
+          <div class="nutrients">
+            <span class="nutrient-tag">วิตามิน A</span>
+            <span class="nutrient-tag">วิตามิน B1, B2</span>
+            <span class="nutrient-tag">แคลเซียม</span>
+            <span class="nutrient-tag">ขับลม</span>
+          </div>
+          <div class="menu-title">🍲 เมนูแนะนำ</div>
+          <div class="menu-list">ไก่ผัดขิง • ปลานึ่งขิง • หมูตุ๋นขิง • โจ๊กใส่ขิง • น้ำขิงร้อน • บัวลอยน้ำขิง • ยำปลาทูใส่ขิง</div>
+        </div>
+
+        <div class="herb-card">
+          <span class="herb-emoji">🌿</span>
+          <h3>ใบกะเพรา</h3>
+          <div class="scientific">Ocimum tenuiflorum — ฤทธิ์ร้อน</div>
+          <div class="benefit">ความร้อนช่วยเพิ่มการไหลเวียนเลือด แก้ท้องอืดท้องเฟ้อ ใยอาหารสูง เด็กที่ได้รับผ่านนมแม่จะลดอาการท้องอืดได้</div>
+          <div class="nutrients">
+            <span class="nutrient-tag">ธาตุเหล็ก</span>
+            <span class="nutrient-tag">แคลเซียม</span>
+            <span class="nutrient-tag">ฟอสฟอรัส</span>
+            <span class="nutrient-tag">ใยอาหาร</span>
+          </div>
+          <div class="menu-title">🍲 เมนูแนะนำ</div>
+          <div class="menu-list">ผัดกะเพราหมู/ไก่ (ใช้พริกไทยอ่อน) • แกงเลียงใส่ใบกะเพรา • ต้มยำปลาทูใส่ใบกะเพรา • แกงป่า</div>
+        </div>
+
+        <div class="herb-card">
+          <span class="herb-emoji">🥬</span>
+          <h3>ตำลึง</h3>
+          <div class="scientific">Coccinia grandis — ผักพื้นบ้านของไทย</div>
+          <div class="benefit">บำรุงน้ำนมและบำรุงเลือดจากการเสียเลือดมากหลังคลอด มีแคลเซียมและธาตุเหล็กสูง ผักรสจืดเย็นแต่มีคุณค่าสูง</div>
+          <div class="nutrients">
+            <span class="nutrient-tag">ธาตุเหล็ก</span>
+            <span class="nutrient-tag">แคลเซียม</span>
+            <span class="nutrient-tag">วิตามิน A</span>
+            <span class="nutrient-tag">บำรุงเลือด</span>
+          </div>
+          <div class="menu-title">🍲 เมนูแนะนำ</div>
+          <div class="menu-list">แกงจืดตำลึงเต้าหู้หมูสับ • แกงเลียงใส่ใบตำลึง • ตำลึงผัดน้ำมันหอย • ไข่เจียวตำลึง</div>
+        </div>
+
+        <div class="herb-card">
+          <span class="herb-emoji">🥒</span>
+          <h3>กุยช่าย</h3>
+          <div class="scientific">Allium tuberosum — ใช้ทั้งต้นและใบ</div>
+          <div class="benefit">บำรุงน้ำนมโดยตรง ช่วยขับลม บำรุงไต ฤทธิ์อบอุ่น เหมาะกับคุณแม่หลังคลอด</div>
+          <div class="nutrients">
+            <span class="nutrient-tag">วิตามิน C</span>
+            <span class="nutrient-tag">แคลเซียม</span>
+            <span class="nutrient-tag">โฟเลต</span>
+          </div>
+          <div class="menu-title">🍲 เมนูแนะนำ</div>
+          <div class="menu-list">ผัดกุยช่ายตับหมู • ผัดกุยช่ายไข่ • ขนมกุยช่ายนึ่ง • กุยช่ายผัดน้ำมันหอย</div>
+        </div>
+
+        <div class="herb-card">
+          <span class="herb-emoji">🎃</span>
+          <h3>ฟักทอง</h3>
+          <div class="scientific">Cucurbita moschata — เก็บได้ทั้งเนื้อและเมล็ด</div>
+          <div class="benefit">วิตามิน A สูงมาก บำรุงสายตาทั้งแม่และลูก เบต้าแคโรทีนช่วยผลิตน้ำนมที่มีคุณภาพ</div>
+          <div class="nutrients">
+            <span class="nutrient-tag">วิตามิน A</span>
+            <span class="nutrient-tag">เบต้าแคโรทีน</span>
+            <span class="nutrient-tag">ฟอสฟอรัส</span>
+            <span class="nutrient-tag">ใยอาหาร</span>
+          </div>
+          <div class="menu-title">🍲 เมนูแนะนำ</div>
+          <div class="menu-list">แกงเลียงฟักทอง • ฟักทองผัดไข่ • ซุปฟักทอง • ฟักทองนึ่ง • บวดฟักทอง • ข้าวต้มฟักทอง</div>
+        </div>
+
+        <div class="herb-card">
+          <span class="herb-emoji">🌶️</span>
+          <h3>พริกไทย</h3>
+          <div class="scientific">Piper nigrum — ราชาแห่งเครื่องเทศ</div>
+          <div class="benefit">ฤทธิ์ร้อน กระตุ้นการไหลเวียนเลือด ขับลม ช่วยย่อย ใช้แทนพริกขี้หนูสำหรับเมนูแม่ลูกอ่อน เพื่อหลีกเลี่ยงรสเผ็ด</div>
+          <div class="nutrients">
+            <span class="nutrient-tag">ฤทธิ์ร้อน</span>
+            <span class="nutrient-tag">ขับลม</span>
+            <span class="nutrient-tag">แมงกานีส</span>
+          </div>
+          <div class="menu-title">🍲 เมนูแนะนำ</div>
+          <div class="menu-list">ต้มจืดพริกไทยหมูสับ • ผัดพริกไทยอ่อน • แกงเลียงใส่พริกไทยป่น • ไก่ตุ๋นพริกไทย</div>
+        </div>
+
+        <div class="herb-card">
+          <span class="herb-emoji">🌿</span>
+          <h3>ใบแมงลัก</h3>
+          <div class="scientific">Ocimum citriodorum — คล้ายกะเพราแต่กลิ่นหอมกว่า</div>
+          <div class="benefit">ฤทธิ์ร้อน เป็นผักสมุนไพรเพิ่มน้ำนม ขับลม ช่วยย่อย แก้ท้องอืดท้องเฟ้อ</div>
+          <div class="nutrients">
+            <span class="nutrient-tag">ธาตุเหล็ก</span>
+            <span class="nutrient-tag">แคลเซียม</span>
+            <span class="nutrient-tag">วิตามิน B</span>
+          </div>
+          <div class="menu-title">🍲 เมนูแนะนำ</div>
+          <div class="menu-list">แกงเลียงใส่ใบแมงลัก • ขนมจีนน้ำยา • แกงป่า • ยำผักรวมใบแมงลัก</div>
+        </div>
+
+        <div class="herb-card">
+          <span class="herb-emoji">🍈</span>
+          <h3>มะละกอดิบ</h3>
+          <div class="scientific">Carica papaya — ผลไม้พื้นบ้าน</div>
+          <div class="benefit">เอนไซม์ Papain ช่วยกระตุ้นการสร้างน้ำนม บำรุงเต้านม วิตามิน A และ C สูง บำรุงผิว</div>
+          <div class="nutrients">
+            <span class="nutrient-tag">Papain</span>
+            <span class="nutrient-tag">วิตามิน A, C</span>
+            <span class="nutrient-tag">โฟเลต</span>
+          </div>
+          <div class="menu-title">🍲 เมนูแนะนำ</div>
+          <div class="menu-list">แกงส้มมะละกอ • ต้มไก่มะละกอ • มะละกอผัดไข่ • ส้มตำมะละกอ (ไม่เผ็ด)</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- DAILY MEAL PLAN -->
+    <div class="card">
+      <h2><span class="icon">🍱</span> ตัวอย่างเมนูอาหารแม่ลูกอ่อน 1 วัน</h2>
+      <p class="desc">เมนูอาหารไทยที่หาง่ายในชุมชน ครบ 5 หมู่ เน้นสมุนไพรกระตุ้นน้ำนม</p>
+
+      <div class="meal-plan">
+        <div class="meal-slot breakfast">
+          <div class="meal-time">⏰ 07:00 น.</div>
+          <div class="meal-name">มื้อเช้า</div>
+          <div class="meal-desc">
+            • ข้าวต้มปลาใส่ขิง<br>
+            • ไข่ต้มสุก 1 ฟอง<br>
+            • น้ำขิงอุ่น 1 แก้ว<br>
+            • กล้วยน้ำว้า 1 ผล
+          </div>
+        </div>
+
+        <div class="meal-slot snack">
+          <div class="meal-time">⏰ 10:00 น.</div>
+          <div class="meal-name">อาหารว่าง</div>
+          <div class="meal-desc">
+            • ฟักทองนึ่ง<br>
+            • นมจืด 1 แก้ว<br>
+            • ถั่วเขียวต้มน้ำขิง<br>
+            • น้ำเปล่าอุ่น
+          </div>
+        </div>
+
+        <div class="meal-slot lunch">
+          <div class="meal-time">⏰ 12:00 น.</div>
+          <div class="meal-name">มื้อกลางวัน</div>
+          <div class="meal-desc">
+            • ข้าวสวย<br>
+            • <strong>แกงเลียงหัวปลีกุ้งสด</strong><br>
+            • ปลานึ่งมะนาว (ไม่เผ็ด)<br>
+            • ผัดผักรวมน้ำมันหอย
+          </div>
+        </div>
+
+        <div class="meal-slot snack">
+          <div class="meal-time">⏰ 15:00 น.</div>
+          <div class="meal-name">อาหารว่างบ่าย</div>
+          <div class="meal-desc">
+            • บัวลอยน้ำขิง<br>
+            • หรือ มันต้มขิง<br>
+            • ผลไม้สด (มะละกอสุก/มะม่วง)<br>
+            • น้ำใบเตยอุ่น
+          </div>
+        </div>
+
+        <div class="meal-slot dinner">
+          <div class="meal-time">⏰ 18:00 น.</div>
+          <div class="meal-name">มื้อเย็น</div>
+          <div class="meal-desc">
+            • ข้าวสวย<br>
+            • <strong>ต้มจืดตำลึงหมูสับ</strong><br>
+            • ไก่ผัดขิง<br>
+            • ผัดกุยช่ายตับ
+          </div>
+        </div>
+
+        <div class="meal-slot snack">
+          <div class="meal-time">⏰ 21:00 น.</div>
+          <div class="meal-name">ก่อนนอน</div>
+          <div class="meal-desc">
+            • นมอุ่น 1 แก้ว<br>
+            • หรือ น้ำขิงอุ่น<br>
+            • กล้วยหอม 1 ผล<br>
+            • (ดื่มน้ำหลังให้นมทุกครั้ง)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- THAI RECIPES -->
+    <div class="card">
+      <h2><span class="icon">📖</span> สูตรอาหารเพิ่มน้ำนมแบบไทยๆ</h2>
+      <p class="desc">สูตรง่ายๆ ทำเองได้ที่บ้าน ใช้วัตถุดิบในชุมชน</p>
+
+      <!-- Recipe 1: Kaeng Liang -->
+      <div class="recipe-card">
+        <h3>🍲 แกงเลียงหัวปลีกุ้งสด <span style="font-size:13px; color:var(--ink-soft); font-weight:400;">(เมนูชูโรง)</span></h3>
+        <div class="recipe-meta">
+          <span>⏱️ 30 นาที</span>
+          <span>🍽️ 3-4 ที่</span>
+          <span>⭐ ระดับ 1: ง่าย</span>
+          <span>🌿 5 สมุนไพรเพิ่มน้ำนม</span>
+        </div>
+        <div class="recipe-section">
+          <div class="label-mini">วัตถุดิบ</div>
+          <ul class="ingredient-list">
+            <li>หัวปลี 1 หัว (ลอกเปลือกนอกออก หั่นบางๆ แช่น้ำมะนาว)</li>
+            <li>กุ้งสด 200 กรัม</li>
+            <li>ฟักทอง 200 กรัม (หั่นชิ้นพอคำ)</li>
+            <li>ใบตำลึง 1 กำมือ</li>
+            <li>ใบแมงลัก 1/2 ถ้วย</li>
+            <li>เครื่องแกง: หอมแดง 5 หัว, พริกไทยขาว 1 ช้อนชา, กะปิ 1 ช้อนโต๊ะ, กุ้งแห้ง 2 ช้อนโต๊ะ</li>
+            <li>น้ำสะอาด 4 ถ้วย, น้ำปลา 1-2 ช้อนโต๊ะ</li>
+          </ul>
+        </div>
+        <button class="recipe-toggle" onclick="toggleRecipe(this)">▼ ดูวิธีทำและประโยชน์</button>
+        <div class="recipe-detail">
+          <div class="recipe-section">
+            <div class="label-mini">วิธีทำ</div>
+            <ol class="steps">
+              <li><div class="step-content"><strong>โขลกเครื่องแกง</strong>โขลกหอมแดง พริกไทย กะปิ กุ้งแห้ง ให้ละเอียด</div></li>
+              <li><div class="step-content"><strong>ต้มน้ำเดือด</strong>ใส่เครื่องแกงโขลก คนให้ละลาย รอให้เดือด</div></li>
+              <li><div class="step-content"><strong>ใส่หัวปลีและฟักทอง</strong>ต้มจนสุกประมาณ 5-7 นาที</div></li>
+              <li><div class="step-content"><strong>ใส่กุ้งสด</strong>ต้มจนกุ้งสุกเปลี่ยนสี ปรุงรสด้วยน้ำปลา</div></li>
+              <li><div class="step-content"><strong>ใส่ผัก</strong>ใส่ใบตำลึงและใบแมงลัก ปิดเตาทันที พร้อมเสิร์ฟร้อนๆ</div></li>
+            </ol>
+          </div>
+          <div class="alert alert-success" style="margin-top:14px;">
+            <span class="alert-ico">💪</span>
+            <div><strong>ประโยชน์:</strong> รวมสมุนไพรเพิ่มน้ำนม 5 ชนิดในชามเดียว — หัวปลี + ฟักทอง + ตำลึง + ใบแมงลัก + พริกไทย กระตุ้น Prolactin และ Oxytocin</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipe 2: Chicken Ginger -->
+      <div class="recipe-card">
+        <h3>🍗 ไก่ผัดขิง</h3>
+        <div class="recipe-meta">
+          <span>⏱️ 20 นาที</span>
+          <span>🍽️ 2-3 ที่</span>
+          <span>⭐ ระดับ 1: ง่าย</span>
+          <span>🌿 ฤทธิ์ร้อน กระตุ้นน้ำนม</span>
+        </div>
+        <div class="recipe-section">
+          <div class="label-mini">วัตถุดิบ</div>
+          <ul class="ingredient-list">
+            <li>เนื้อไก่ 300 กรัม (หั่นชิ้นพอคำ)</li>
+            <li>ขิงแก่ 100 กรัม (ซอยเป็นเส้น)</li>
+            <li>เห็ดหูหนูแห้ง 1 กำมือ (แช่น้ำให้นิ่ม)</li>
+            <li>ต้นหอม 2 ต้น, พริกชี้ฟ้าแดง 1 เม็ด</li>
+            <li>กระเทียมสับ 1 ช้อนโต๊ะ</li>
+            <li>ปรุงรส: ซีอิ๊วขาว 2 ช้อนโต๊ะ, น้ำตาล 1 ช้อนชา, น้ำมันหอย 1 ช้อนโต๊ะ</li>
+          </ul>
+        </div>
+        <button class="recipe-toggle" onclick="toggleRecipe(this)">▼ ดูวิธีทำและประโยชน์</button>
+        <div class="recipe-detail">
+          <div class="recipe-section">
+            <div class="label-mini">วิธีทำ</div>
+            <ol class="steps">
+              <li><div class="step-content"><strong>เจียวกระเทียม</strong>ตั้งกระทะใส่น้ำมัน เจียวกระเทียมจนหอม</div></li>
+              <li><div class="step-content"><strong>ผัดไก่</strong>ใส่ไก่ผัดจนสุกเปลี่ยนสี</div></li>
+              <li><div class="step-content"><strong>ใส่ขิงและเห็ด</strong>ผัดต่อ 2-3 นาทีให้ขิงสุก กลิ่นหอม</div></li>
+              <li><div class="step-content"><strong>ปรุงรส</strong>ใส่ซีอิ๊ว น้ำตาล น้ำมันหอย ผัดให้เข้ากัน</div></li>
+              <li><div class="step-content"><strong>ใส่พริกและต้นหอม</strong>คนเร็วๆ ปิดไฟ พร้อมเสิร์ฟ</div></li>
+            </ol>
+          </div>
+          <div class="alert alert-info" style="margin-top:14px;">
+            <span class="alert-ico">💡</span>
+            <div><strong>เคล็ดลับ:</strong> ใส่ขิงในปริมาณมาก ขิงยิ่งแก่ยิ่งดี ฤทธิ์ร้อนช่วยกระตุ้นการไหลของน้ำนม คุณแม่ที่หนาวเย็นง่ายจะรู้สึกอุ่นขึ้น</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipe 3: Tom Jued -->
+      <div class="recipe-card">
+        <h3>🍜 ต้มจืดตำลึงหมูสับ</h3>
+        <div class="recipe-meta">
+          <span>⏱️ 20 นาที</span>
+          <span>🍽️ 3-4 ที่</span>
+          <span>⭐ ระดับ 1: ง่ายมาก</span>
+          <span>🌿 บำรุงเลือด+น้ำนม</span>
+        </div>
+        <div class="recipe-section">
+          <div class="label-mini">วัตถุดิบ</div>
+          <ul class="ingredient-list">
+            <li>ใบตำลึง 2 กำมือ (เด็ดใบ ล้างสะอาด)</li>
+            <li>หมูสับ 200 กรัม</li>
+            <li>เต้าหู้ขาวอ่อน 1 หลอด (หั่นชิ้นเล็ก)</li>
+            <li>กระเทียมสับ 1 ช้อนโต๊ะ, พริกไทยป่น 1/2 ช้อนชา</li>
+            <li>น้ำซุปกระดูกหมู 4 ถ้วย</li>
+            <li>ปรุงรส: ซีอิ๊วขาว 1 ช้อนโต๊ะ, เกลือเล็กน้อย, ต้นหอมซอย</li>
+          </ul>
+        </div>
+        <button class="recipe-toggle" onclick="toggleRecipe(this)">▼ ดูวิธีทำและประโยชน์</button>
+        <div class="recipe-detail">
+          <div class="recipe-section">
+            <div class="label-mini">วิธีทำ</div>
+            <ol class="steps">
+              <li><div class="step-content"><strong>ปรุงหมูสับ</strong>คลุกเคล้าหมูสับกับกระเทียมสับและพริกไทยป่น พักไว้ 10 นาที</div></li>
+              <li><div class="step-content"><strong>ต้มน้ำซุป</strong>ใส่น้ำซุปในหม้อ ตั้งไฟกลางจนเดือด</div></li>
+              <li><div class="step-content"><strong>ปั้นหมูเป็นก้อน</strong>ใช้ช้อนตักหมูสับเป็นก้อนกลม ใส่ลงในน้ำซุป</div></li>
+              <li><div class="step-content"><strong>ใส่เต้าหู้</strong>ต้มต่อ 5 นาทีให้หมูสุก ปรุงรสด้วยซีอิ๊วและเกลือ</div></li>
+              <li><div class="step-content"><strong>ใส่ใบตำลึง</strong>ปิดไฟทันทีที่ใบตำลึงสลด โรยต้นหอม พร้อมเสิร์ฟ</div></li>
+            </ol>
+          </div>
+          <div class="alert alert-success" style="margin-top:14px;">
+            <span class="alert-ico">🩸</span>
+            <div><strong>ประโยชน์:</strong> ตำลึงและหมูสับช่วยบำรุงเลือดที่เสียไปจากการคลอด ธาตุเหล็กสูง โปรตีนช่วยซ่อมแซมร่างกาย เหมาะกับแม่ในช่วง 1-3 เดือนแรกหลังคลอด</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recipe 4: Ginger Drink -->
+      <div class="recipe-card">
+        <h3>☕ น้ำขิงอุ่นบำรุงน้ำนม <span style="font-size:13px; color:var(--ink-soft); font-weight:400;">(ดื่มหลังคลอดทันที)</span></h3>
+        <div class="recipe-meta">
+          <span>⏱️ 15 นาที</span>
+          <span>🍽️ 4 แก้ว</span>
+          <span>⭐ ระดับ 1: ง่ายที่สุด</span>
+          <span>🌿 ดื่มได้ทุกวัน</span>
+        </div>
+        <div class="recipe-section">
+          <div class="label-mini">วัตถุดิบ</div>
+          <ul class="ingredient-list">
+            <li>ขิงแก่ 100 กรัม (ทุบให้แตก ไม่ปอกเปลือก)</li>
+            <li>น้ำตาลทรายแดง/น้ำตาลโตนด 3 ช้อนโต๊ะ</li>
+            <li>น้ำสะอาด 1 ลิตร</li>
+            <li>เกลือเล็กน้อย (ตามชอบ)</li>
+          </ul>
+        </div>
+        <button class="recipe-toggle" onclick="toggleRecipe(this)">▼ ดูวิธีทำและประโยชน์</button>
+        <div class="recipe-detail">
+          <div class="recipe-section">
+            <div class="label-mini">วิธีทำ</div>
+            <ol class="steps">
+              <li><div class="step-content"><strong>ล้างขิง</strong>ล้างขิงให้สะอาด ทุบให้แตก (ไม่ต้องปอกเปลือก เพราะมีสารอาหารมาก)</div></li>
+              <li><div class="step-content"><strong>ต้ม</strong>ใส่ขิงทุบในน้ำเดือด ต้ม 10 นาทีไฟกลาง</div></li>
+              <li><div class="step-content"><strong>ปรุงรส</strong>ใส่น้ำตาลและเกลือเล็กน้อย คนให้ละลาย</div></li>
+              <li><div class="step-content"><strong>กรองและเสิร์ฟ</strong>กรองเอาเฉพาะน้ำ ดื่มอุ่นๆ วันละ 2-3 แก้ว</div></li>
+            </ol>
+          </div>
+          <div class="alert alert-warning" style="margin-top:14px;">
+            <span class="alert-ico">⏰</span>
+            <div><strong>เวลาที่ดีที่สุด:</strong> ดื่มหลังตื่นนอน ก่อนให้นมลูก 30 นาที จะกระตุ้นการไหลของน้ำนมได้ดีที่สุด เหมาะดื่มในวันที่อากาศเย็น</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AVOID FOODS -->
+    <div class="card">
+      <h2><span class="icon">⛔</span> อาหารที่แม่ให้นมควรหลีกเลี่ยง</h2>
+      <p class="desc">อาหารบางชนิดอาจส่งผลต่อปริมาณน้ำนมหรือสุขภาพลูก ควรงดหรือลดในช่วงให้นมลูก</p>
+
+      <div class="avoid-grid">
+        <div class="avoid-card">
+          <span class="avoid-emoji">☕</span>
+          <div class="avoid-name">กาแฟ/ชาเข้ม</div>
+          <div class="avoid-reason">คาเฟอีนผ่านน้ำนม ทำให้ลูกนอนไม่หลับ งอแง จำกัดไม่เกิน 1 แก้ว/วัน</div>
+        </div>
+
+        <div class="avoid-card">
+          <span class="avoid-emoji">🍺</span>
+          <div class="avoid-name">เครื่องดื่มแอลกอฮอล์</div>
+          <div class="avoid-reason">ผ่านน้ำนมโดยตรง กระทบพัฒนาการสมองลูก ห้ามเด็ดขาด</div>
+        </div>
+
+        <div class="avoid-card">
+          <span class="avoid-emoji">🥶</span>
+          <div class="avoid-name">น้ำเย็น/น้ำแข็ง</div>
+          <div class="avoid-reason">ภูมิปัญญาไทย: ทำให้น้ำนมไม่ไหล ระบบไหลเวียนเลือดติดขัด</div>
+        </div>
+
+        <div class="avoid-card">
+          <span class="avoid-emoji">🥬</span>
+          <div class="avoid-name">ผักชี/ใบสะระแหน่</div>
+          <div class="avoid-reason">มีฤทธิ์ลดน้ำนม (Anti-galactagogue) ควรหลีกเลี่ยง</div>
+        </div>
+
+        <div class="avoid-card">
+          <span class="avoid-emoji">🌶️</span>
+          <div class="avoid-name">เผ็ดจัด</div>
+          <div class="avoid-reason">ทำให้ลูกแสบท้อง ท้องเสีย ใช้พริกไทยอ่อนแทนพริกขี้หนู</div>
+        </div>
+
+        <div class="avoid-card">
+          <span class="avoid-emoji">🥒</span>
+          <div class="avoid-name">ของหมักดอง</div>
+          <div class="avoid-reason">ผักดอง ปลาร้าดิบ อาจมีเชื้อโรค กระทบสุขภาพแม่และลูก</div>
+        </div>
+
+        <div class="avoid-card">
+          <span class="avoid-emoji">🐟</span>
+          <div class="avoid-name">ปลาทะเลใหญ่</div>
+          <div class="avoid-reason">ปลาฉลาม/ทูน่ามีปรอทสูง กระทบพัฒนาการสมองลูก</div>
+        </div>
+
+        <div class="avoid-card">
+          <span class="avoid-emoji">💊</span>
+          <div class="avoid-name">ยาสมุนไพรไม่รู้แหล่ง</div>
+          <div class="avoid-reason">ยาดองเหล้า ยาขับน้ำคาวปลาบางชนิด ปรึกษาแพทย์ก่อนใช้</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- THAI WISDOM -->
+    <div class="card">
+      <h2><span class="icon">🎋</span> ภูมิปัญญาไทยสำหรับแม่หลังคลอด</h2>
+
+      <ul class="tips-list">
+        <li><strong>"อยู่ไฟ" หลังคลอด</strong> — การอบสมุนไพร นวด ประคบ ช่วยให้มดลูกเข้าอู่เร็ว ขับน้ำคาวปลา และกระตุ้นการสร้างน้ำนม (ทำในช่วง 7-30 วันหลังคลอด)</li>
+        <li><strong>ดื่มน้ำอุ่น/น้ำสมุนไพร</strong> — น้ำขิง น้ำใบเตย น้ำตะไคร้ ดื่มแทนน้ำเย็น เพื่อให้ร่างกายอบอุ่น</li>
+        <li><strong>กินอาหารฤทธิ์ร้อน</strong> — ขิง พริกไทย กระเพรา ใบแมงลัก กระตุ้นการไหลเวียนเลือดและน้ำนม</li>
+        <li><strong>หลีกเลี่ยงน้ำเย็น 1-3 เดือนแรก</strong> — ตามหลักภูมิปัญญาไทย เพราะอาจทำให้ "ลมจับเส้น" หรือปวดข้อในอนาคต</li>
+        <li><strong>นอนพักเยอะๆ</strong> — "นอนไฟ" หลังคลอด พักผ่อนให้เพียงพอเป็นการสร้างน้ำนมที่ดีที่สุด</li>
+        <li><strong>นวดเต้านม</strong> — ใช้น้ำมันมะพร้าวอุ่นๆ นวดเต้านมก่อนให้นมลูก เพื่อกระตุ้นการไหลของน้ำนม</li>
+        <li><strong>ดื่มน้ำหลังให้นมทุกครั้ง</strong> — เพื่อชดเชยน้ำที่เสียไปกับน้ำนม อย่างน้อยวันละ 8-10 แก้ว</li>
+      </ul>
+
+      <div class="alert alert-info" style="margin-top: 20px;">
+        <span class="alert-ico">📞</span>
+        <div>
+          <strong>หมายเหตุจากเจ้าหน้าที่:</strong> ภูมิปัญญาไทยเหล่านี้เป็นแนวทางเสริม ควรใช้ควบคู่กับคำแนะนำทางการแพทย์ หากมีอาการผิดปกติ เช่น ไข้ เจ็บเต้านม น้ำนมไม่ไหล ปรึกษาคลินิกนมแม่ที่ <strong>รพ.สต.เกาะแต้ว</strong> ทันที
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================== PANEL 5: TIPS =========================== -->
+  <div class="panel" id="panel-tips">
+    <div class="card">
+      <h2><span class="icon">💡</span> หลักการให้นมแม่ที่ถูกต้อง</h2>
+
+      <div class="alert alert-success">
+        <span class="alert-ico">🌟</span>
+        <div>
+          <strong>คำแนะนำ WHO/UNICEF:</strong> ให้นมแม่ภายใน 1 ชั่วโมงแรกหลังคลอด นมแม่อย่างเดียว 6 เดือนแรก และให้นมแม่ร่วมกับอาหารตามวัยจนถึง 2 ปีหรือนานกว่านั้น
+        </div>
+      </div>
+
+      <h3 style="font-family: 'Prompt'; color: var(--sage-700); margin: 24px 0 12px; font-size: 17px;">🤱 สำหรับคุณแม่ที่เลี้ยงลูกด้วยนมแม่อย่างเดียว</h3>
+      <ul class="tips-list">
+        <li><strong>ดูดเข้าเต้าบ่อยตามที่ลูกต้องการ</strong> (Feed on demand) ไม่จำกัดเวลา ปกติ 8-12 ครั้ง/วัน</li>
+        <li>ในช่วงแรกเกิด ให้ลูกดูดทุก 2-3 ชั่วโมง <strong>เพื่อกระตุ้นการสร้างน้ำนม</strong></li>
+        <li>ดูดให้ครบทั้ง 2 ข้าง <strong>ข้างละ 15-20 นาที</strong> หรือจนลูกอิ่ม (ปล่อยเต้าเอง)</li>
+        <li>ให้ลูกได้ <strong>foremilk และ hindmilk</strong> โดยให้ดูดข้างหนึ่งจนหมดก่อนเปลี่ยนข้าง</li>
+        <li>คุณแม่ควร <strong>ดื่มน้ำอย่างน้อยวันละ 8 แก้ว</strong> และทานอาหารครบ 5 หมู่</li>
+        <li>หลีกเลี่ยงเครื่องดื่มเย็น เน้นอาหารกระตุ้นน้ำนม เช่น แกงเลียง หัวปลี ใบกะเพรา</li>
+        <li><strong>พักผ่อนให้เพียงพอ</strong> ความเครียดและการพักผ่อนน้อยมีผลต่อปริมาณน้ำนม</li>
+      </ul>
+
+      <h3 style="font-family: 'Prompt'; color: var(--sage-700); margin: 24px 0 12px; font-size: 17px;">💼 สำหรับคุณแม่ทำงาน</h3>
+      <ul class="tips-list">
+        <li><strong>เริ่มสต็อกน้ำนม 2-3 สัปดาห์ก่อนกลับไปทำงาน</strong> ปั๊มหลังให้ลูกดูดเสร็จ</li>
+        <li>ที่ทำงาน <strong>ปั๊มทุก 3 ชั่วโมง</strong> เพื่อรักษาปริมาณน้ำนมไม่ให้ลด</li>
+        <li>ก่อนออกจากบ้าน <strong>ให้ลูกดูดเต้าให้อิ่ม</strong> และดูดเต้าทันทีเมื่อกลับถึงบ้าน</li>
+        <li>เตรียม <strong>เครื่องปั๊มนม กระติกน้ำแข็ง ถุงเก็บน้ำนม</strong> ที่ทำงาน</li>
+        <li>หาห้องที่เป็นส่วนตัวและสะอาดสำหรับการปั๊ม</li>
+        <li>ในวันหยุด <strong>เน้นให้ลูกดูดเต้าเป็นหลัก</strong> เพื่อกระตุ้นน้ำนมและสายสัมพันธ์</li>
+        <li><strong>ฝึกลูกให้คุ้นกับขวดนม</strong> ก่อนกลับไปทำงาน 2-3 สัปดาห์</li>
+      </ul>
+
+      <h3 style="font-family: 'Prompt'; color: var(--sage-700); margin: 24px 0 12px; font-size: 17px;">⚠️ สัญญาณที่ต้องระวัง</h3>
+      <ul class="tips-list">
+        <li><strong>น้ำหนักลูกขึ้นน้อยกว่า 600 กรัม/เดือน</strong> ในช่วง 4 เดือนแรก อาจได้รับน้ำนมไม่พอ</li>
+        <li>ลูกฉี่น้อยกว่า 6 ครั้ง/วัน หรือปัสสาวะสีเข้ม อาจขาดน้ำ</li>
+        <li>ลูกร้องไห้บ่อย ไม่ยอมหลับ หรือหลับนานผิดปกติหลังกินนม</li>
+        <li>คุณแม่มีอาการคัดเต้าจัด เจ็บปวด หรือมีไข้ อาจเป็นภาวะเต้านมอักเสบ</li>
+        <li>ลูกน้ำหนักขึ้นเร็วเกินไป (>60 กรัม/วัน) อาจเป็น overfeeding</li>
+      </ul>
+
+      <div class="alert alert-info" style="margin-top: 24px;">
+        <span class="alert-ico">📞</span>
+        <div>
+          <strong>ปรึกษาเจ้าหน้าที่:</strong> หากมีข้อสงสัยหรือปัญหาในการให้นมลูก สามารถปรึกษาคลินิกนมแม่ ที่ รพ.สต.เกาะแต้ว หรือคลินิกนมแม่ใกล้บ้าน เจ้าหน้าที่พยาบาลและกุมารแพทย์ยินดีให้คำแนะนำ
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="icon">📊</span> สูตรการคำนวณน้ำนมแม่</h2>
+      <p class="desc">สูตรอ้างอิงจากกรมอนามัย กระทรวงสาธารณสุข</p>
+
+      <div class="storage-grid">
+        <div class="storage-card">
+          <div class="place" style="margin-bottom: 8px;">แรกเกิด - 1 เดือน</div>
+          <div style="font-family: 'Prompt'; font-size: 18px; color: var(--pink-600); font-weight: 600; margin: 8px 0;">
+            น้ำหนัก × 150 ÷ 30
+          </div>
+          <div class="note">= ปริมาณนม (ออนซ์/วัน)<br>เช่น 4 กก. = 4×150÷30 = 20 ออนซ์/วัน</div>
+        </div>
+
+        <div class="storage-card">
+          <div class="place" style="margin-bottom: 8px;">2-6 เดือน</div>
+          <div style="font-family: 'Prompt'; font-size: 18px; color: var(--pink-600); font-weight: 600; margin: 8px 0;">
+            น้ำหนัก × 120 ÷ 30
+          </div>
+          <div class="note">= ปริมาณนม (ออนซ์/วัน)<br>เช่น 6 กก. = 6×120÷30 = 24 ออนซ์/วัน</div>
+        </div>
+
+        <div class="storage-card">
+          <div class="place" style="margin-bottom: 8px;">6-12 เดือน</div>
+          <div style="font-family: 'Prompt'; font-size: 18px; color: var(--pink-600); font-weight: 600; margin: 8px 0;">
+            น้ำหนัก × 110 ÷ 30
+          </div>
+          <div class="note">= ปริมาณนม (ออนซ์/วัน)<br>+ อาหารเสริมตามวัย 1-3 มื้อ</div>
+        </div>
+
+        <div class="storage-card">
+          <div class="place" style="margin-bottom: 8px;">1-2 ปี</div>
+          <div style="font-family: 'Prompt'; font-size: 18px; color: var(--pink-600); font-weight: 600; margin: 8px 0;">
+            500-600 มล./วัน
+          </div>
+          <div class="note">นมแม่ + อาหาร 3 มื้อหลัก<br>+ อาหารว่าง 1-2 มื้อ</div>
+        </div>
+      </div>
+
+      <div class="alert alert-info" style="margin-top: 20px;">
+        <span class="alert-ico">📐</span>
+        <div>
+          <strong>หน่วยที่ใช้:</strong> 1 ออนซ์ = 30 มล. / 1 ช้อนชา = 5 มล. / 1 ช้อนโต๊ะ = 15 มล.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>เครื่องคำนวณน้ำนมแม่ © 2568 | รพ.สต.เกาะแต้ว</div>
+    <div class="ref">อ้างอิง: กรมอนามัย กระทรวงสาธารณสุข | WHO/UNICEF Breastfeeding Guidelines | คลินิกนมแม่ ราชวิทยาลัยกุมารแพทย์แห่งประเทศไทย</div>
+  </div>
+
+</div>
+
+<!-- ============= PRINT FAB BUTTON ============= -->
+<button class="print-fab" onclick="openPrintModal()" title="พิมพ์เอกสารแจกผู้รับบริการ">🖨️</button>
+
+<!-- ============= PRINT MODAL ============= -->
+<div class="modal-overlay" id="printModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2>🖨️ พิมพ์เอกสารแจกผู้รับบริการ</h2>
+        <div class="modal-desc">เลือกข้อมูลผู้รับบริการและส่วนที่ต้องการพิมพ์</div>
+      </div>
+      <button class="modal-close" onclick="closePrintModal()">✕</button>
+    </div>
+
+    <!-- Patient Info -->
+    <div class="form-grid two-col">
+      <div class="form-group">
+        <label>ชื่อ-สกุลคุณแม่</label>
+        <input type="text" id="motherName" placeholder="เช่น คุณสมหญิง ใจดี">
+      </div>
+      <div class="form-group">
+        <label>ชื่อทารก</label>
+        <input type="text" id="babyName" placeholder="เช่น น้องอันดา">
+      </div>
+      <div class="form-group">
+        <label>HN / เลขทะเบียน</label>
+        <input type="text" id="hnNumber" placeholder="เช่น 12345/68">
+      </div>
+      <div class="form-group">
+        <label>วันที่ให้คำแนะนำ</label>
+        <input type="date" id="visitDate">
+      </div>
+    </div>
+
+    <!-- Document Selection -->
+    <div style="margin-top: 22px;">
+      <label style="font-weight: 600; color: var(--ink); display: block; margin-bottom: 10px;">
+        📋 เลือกเอกสารที่จะพิมพ์
+      </label>
+      <div class="doc-options">
+        <label class="doc-option">
+          <input type="checkbox" class="doc-check" value="calc" checked>
+          <span class="doc-icon">📊</span>
+          <div class="doc-info">
+            <div class="doc-title">แผ่นที่ 1: ผลการคำนวณนม</div>
+            <div class="doc-sub">ปริมาณนม + ตารางการให้นมเฉพาะตัว</div>
+          </div>
+        </label>
+
+        <label class="doc-option">
+          <input type="checkbox" class="doc-check" value="storage" checked>
+          <span class="doc-icon">🧊</span>
+          <div class="doc-info">
+            <div class="doc-title">แผ่นที่ 2: การเก็บรักษานมแม่</div>
+            <div class="doc-sub">ตารางอุณหภูมิ + วิธีเก็บถูกต้อง (ติดตู้เย็นได้)</div>
+          </div>
+        </label>
+
+        <label class="doc-option">
+          <input type="checkbox" class="doc-check" value="usage">
+          <span class="doc-icon">🍼</span>
+          <div class="doc-info">
+            <div class="doc-title">แผ่นที่ 3: การนำนมแม่มาใช้</div>
+            <div class="doc-sub">ขั้นตอนละลายและอุ่นนม + ข้อควรระวัง</div>
+          </div>
+        </label>
+
+        <label class="doc-option">
+          <input type="checkbox" class="doc-check" value="thaifood" checked>
+          <span class="doc-icon">🌿</span>
+          <div class="doc-info">
+            <div class="doc-title">แผ่นที่ 4: อาหารไทยเพิ่มน้ำนม</div>
+            <div class="doc-sub">สมุนไพร 9 ชนิด + เมนู 1 วัน + ของแสลง</div>
+          </div>
+        </label>
+
+        <label class="doc-option">
+          <input type="checkbox" class="doc-check" value="recipe">
+          <span class="doc-icon">📖</span>
+          <div class="doc-info">
+            <div class="doc-title">แผ่นที่ 5: สูตรอาหารเพิ่มน้ำนม</div>
+            <div class="doc-sub">แกงเลียงหัวปลี + น้ำขิงอุ่น</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <button class="btn" onclick="executePrint()" style="margin-top: 24px;">
+      🖨️ พิมพ์เอกสาร
+    </button>
+    <button class="recipe-toggle" onclick="closePrintModal()" style="margin-top: 8px;">
+      ยกเลิก
+    </button>
+  </div>
+</div>
+
+<!-- ============= PRINT-ONLY AREA ============= -->
+<div class="print-area" id="printArea"></div>
+
+<script>
+// ============= AGE GROUP DATA =============
+const ageData = [
+  { label: "แรกเกิด (วันที่ 1)",      mlPerKg: 0,   directMl: 5,    meals: 8,  interval: 2.5, factor: null },
+  { label: "อายุ 2-3 วัน",            mlPerKg: 0,   directMl: 25,   meals: 8,  interval: 2.5, factor: null },
+  { label: "อายุ 4-7 วัน",            mlPerKg: 0,   directMl: 60,   meals: 9,  interval: 2.5, factor: 150 },
+  { label: "อายุ 2 สัปดาห์",          mlPerKg: 150, directMl: 90,   meals: 8,  interval: 3,   factor: 150 },
+  { label: "อายุ 1 เดือน",            mlPerKg: 150, directMl: 105,  meals: 7,  interval: 3.5, factor: 150 },
+  { label: "อายุ 2 เดือน",            mlPerKg: 130, directMl: 135,  meals: 7,  interval: 3.5, factor: 130 },
+  { label: "อายุ 3 เดือน",            mlPerKg: 120, directMl: 150,  meals: 6,  interval: 4,   factor: 120 },
+  { label: "อายุ 4 เดือน",            mlPerKg: 120, directMl: 165,  meals: 6,  interval: 4,   factor: 120 },
+  { label: "อายุ 5 เดือน",            mlPerKg: 110, directMl: 195,  meals: 5,  interval: 4,   factor: 110 },
+  { label: "อายุ 6 เดือน",            mlPerKg: 110, directMl: 210,  meals: 5,  interval: 4,   factor: 110 },
+  { label: "อายุ 7-9 เดือน",          mlPerKg: 110, directMl: 210,  meals: 4,  interval: 5,   factor: 110 },
+  { label: "อายุ 9-12 เดือน",         mlPerKg: 100, directMl: 210,  meals: 4,  interval: 5,   factor: 100 },
+  { label: "อายุ 1-2 ปี",             mlPerKg: 0,   directMl: 180,  meals: 3,  interval: 6,   factor: null }
+];
+
+// ============= TAB SWITCHING =============
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+  });
+});
+
+// ============= MOTHER TYPE TOGGLE =============
+document.querySelectorAll('input[name="motherType"]').forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    document.getElementById('workingFields').style.display =
+      e.target.value === 'working' ? 'block' : 'none';
+  });
+});
+
+// ============= CALCULATE =============
+let currentResults = null;
+
+document.getElementById('calcBtn').addEventListener('click', calculate);
+
+function calculate() {
+  const ageIdx = parseInt(document.getElementById('ageGroup').value);
+  const weight = parseFloat(document.getElementById('weight').value);
+  const motherType = document.querySelector('input[name="motherType"]:checked').value;
+  const age = ageData[ageIdx];
+
+  if (!weight || weight <= 0) {
+    alert('กรุณากรอกน้ำหนักทารก');
+    return;
+  }
+
+  // Calculate daily volume
+  let dailyMl;
+  if (age.factor && weight) {
+    dailyMl = Math.round(weight * age.factor);
+  } else {
+    dailyMl = age.directMl * age.meals;
+  }
+
+  // Special case for newborn day 1
+  if (ageIdx === 0) dailyMl = 5 * 8; // 5ml × 8 times = 40ml
+  if (ageIdx === 1) dailyMl = 25 * 8;
+  if (ageIdx === 12) dailyMl = 550; // 1-2 yr
+
+  const perMealMl = Math.round(dailyMl / age.meals);
+  const perMealOz = (perMealMl / 30).toFixed(1);
+  const totalOz = (dailyMl / 30).toFixed(1);
+
+  // Update result display
+  document.getElementById('totalDaily').innerHTML = `${dailyMl} <span class="unit">มล./วัน</span>`;
+  document.getElementById('totalOz').textContent = `≈ ${totalOz} ออนซ์ต่อวัน`;
+  document.getElementById('meals').innerHTML = `${age.meals} <span class="small">มื้อ</span>`;
+  document.getElementById('perMeal').innerHTML = `${perMealMl} <span class="small">มล.</span>`;
+  document.getElementById('perMealOz').innerHTML = `${perMealOz} <span class="small">ออนซ์</span>`;
+  document.getElementById('interval').innerHTML = `${age.interval} <span class="small">ชม.</span>`;
+
+  // Hide all advice first
+  document.getElementById('exclusiveAdvice').style.display = 'none';
+  document.getElementById('workingAdvice').style.display = 'none';
+
+  if (motherType === 'exclusive') {
+    document.getElementById('exclusiveAdvice').style.display = 'block';
+    renderExclusiveTips(age, ageIdx);
+  } else {
+    document.getElementById('workingAdvice').style.display = 'block';
+    renderWorkingPlan(age, ageIdx, perMealMl, dailyMl);
+  }
+
+  // Save state and build schedule
+  currentResults = { age, ageIdx, weight, motherType, dailyMl, perMealMl };
+  buildSchedule();
+
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderExclusiveTips(age, ageIdx) {
+  const tips = [];
+
+  if (ageIdx <= 2) {
+    tips.push('ในช่วงแรกเกิด-1 สัปดาห์ ให้ลูกดูดเต้าทุก 2-3 ชั่วโมง อย่างน้อย 8-12 ครั้ง/วัน เพื่อกระตุ้นการสร้างน้ำนม');
+    tips.push('นมระยะแรก (Colostrum) มีปริมาณน้อยแต่อุดมด้วยภูมิคุ้มกัน อย่ากังวลว่านมไม่พอ');
+    tips.push('ปลุกลูกขึ้นมาดูดทุก 3 ชั่วโมงในเวลากลางคืน หากลูกหลับนานเกินไป');
+  } else if (ageIdx <= 5) {
+    tips.push('ดูดเต้าตามความต้องการของลูก (Feed on demand) ปกติทุก 3-4 ชั่วโมง');
+    tips.push('ให้ลูกดูดข้างหนึ่งจนหมดก่อนเปลี่ยนข้าง เพื่อให้ได้ทั้ง foremilk และ hindmilk');
+    tips.push('สังเกตสัญญาณหิว: ลูกตื่นตัว ขยับปาก หาเต้า ก่อนที่จะร้องไห้');
+  } else if (ageIdx <= 8) {
+    tips.push('ลูกอาจดูดน้อยลงเพราะห่วงเล่น ให้พยายามให้นมในห้องที่เงียบสงบ');
+    tips.push('สามารถเริ่มเตรียมตัวสำหรับการให้อาหารเสริมเมื่ออายุ 6 เดือน');
+  } else if (ageIdx === 9) {
+    tips.push('🎉 อายุ 6 เดือนเริ่มอาหารเสริมได้ 1 มื้อ/วัน เริ่มจากข้าวบดละเอียด ผักบด ผลไม้สุก');
+    tips.push('ยังคงให้นมแม่เป็นหลัก อาหารเสริมเป็นเพียงการฝึก ไม่ใช่ทดแทนนม');
+  } else if (ageIdx <= 11) {
+    tips.push('อาหารเสริม 2-3 มื้อ/วัน + นมแม่ 4-5 มื้อ');
+    tips.push('เพิ่มความหลากหลายของอาหาร เพื่อให้ลูกได้รับสารอาหารครบถ้วน');
+  } else {
+    tips.push('นมแม่ยังคงเป็นแหล่งสารอาหารที่ดี แม้ลูกจะกินอาหารเป็นหลักแล้ว');
+    tips.push('WHO แนะนำให้นมแม่ต่อไปจนถึง 2 ปีหรือนานกว่านั้น');
+  }
+
+  tips.push('ดื่มน้ำอย่างน้อย 8-10 แก้ว/วัน และทานอาหารครบ 5 หมู่');
+  tips.push('สังเกตน้ำหนักลูกขึ้น 20-60 กรัม/วัน เป็นสัญญาณว่านมเพียงพอ');
+  tips.push('ลูกฉี่อย่างน้อย 6-8 ครั้ง/วัน และอุจจาระสีเหลืองนุ่ม แสดงว่าได้รับนมพอ');
+
+  const ul = document.getElementById('exclusiveTips');
+  ul.innerHTML = tips.map(t => `<li>${t}</li>`).join('');
+}
+
+function renderWorkingPlan(age, ageIdx, perMealMl, dailyMl) {
+  const leaveTime = document.getElementById('leaveTime').value || '07:00';
+  const returnTime = document.getElementById('returnTime').value || '17:00';
+
+  const [lh, lm] = leaveTime.split(':').map(Number);
+  const [rh, rm] = returnTime.split(':').map(Number);
+  let awayMinutes = (rh * 60 + rm) - (lh * 60 + lm);
+  if (awayMinutes < 0) awayMinutes += 24 * 60;
+  const awayHours = (awayMinutes / 60).toFixed(1);
+
+  // Calculate stock meals
+  const stockMeals = Math.ceil(awayHours / age.interval);
+  const stockDaily = stockMeals * perMealMl;
+  const pumpCount = Math.max(1, Math.floor(awayHours / 3));
+
+  document.getElementById('awayHours').innerHTML = `${awayHours} <span class="small">ชม.</span>`;
+  document.getElementById('stockMeals').innerHTML = `${stockMeals} <span class="small">มื้อ</span>`;
+  document.getElementById('stockDaily').innerHTML = `${stockDaily} <span class="small">มล.</span>`;
+  document.getElementById('pumpCount').innerHTML = `${pumpCount} <span class="small">ครั้ง</span>`;
+
+  const tips = [
+    `เริ่มสต็อกน้ำนม 2-3 สัปดาห์ก่อนกลับไปทำงาน วันละ 1-2 ออนซ์ก็เพียงพอ`,
+    `ก่อนออกจากบ้าน <strong>${leaveTime} น.</strong> ให้ลูกดูดเต้าให้อิ่ม 1 มื้อ`,
+    `ที่ทำงาน ปั๊มทุก 3 ชั่วโมง รวม ${pumpCount} ครั้ง เพื่อรักษาปริมาณน้ำนม`,
+    `เก็บนมที่ปั๊มในกระติกน้ำแข็งทันที (อยู่ได้ 24 ชั่วโมง) หรือตู้เย็นที่ทำงาน (ถ้ามี)`,
+    `กลับถึงบ้าน <strong>${returnTime} น.</strong> ให้ลูกดูดเต้าทันที + ให้นมต่อเนื่องในตอนเย็น/กลางคืน`,
+    `ในวันหยุด ให้ลูกดูดเต้าเป็นหลักตลอดวัน เพื่อกระตุ้นน้ำนม`,
+    `ควรมีสต็อกน้ำนมสำรองในช่องแช่แข็ง อย่างน้อย 2-3 วัน เผื่อกรณีฉุกเฉิน`,
+    `ฝึกผู้เลี้ยง (พ่อ/ปู่ย่า/พี่เลี้ยง) ให้ป้อนนมขวดอย่างถูกวิธี ไม่บีบให้ลูกกินเร็วเกินไป`
+  ];
+
+  document.getElementById('workingTips').innerHTML = tips.map(t => `<li>${t}</li>`).join('');
+}
+
+// ============= BUILD SCHEDULE =============
+function buildSchedule() {
+  if (!currentResults) return;
+
+  const { age, ageIdx, motherType, perMealMl } = currentResults;
+  const startHour = 6; // start at 6:00 AM
+  const meals = age.meals;
+  const interval = age.interval;
+
+  let html = `
+    <div class="alert alert-success">
+      <span class="alert-ico">📋</span>
+      <div><strong>ตารางสำหรับ:</strong> ${age.label} • ${meals} มื้อ/วัน • มื้อละ ${perMealMl} มล. (${(perMealMl/30).toFixed(1)} ออนซ์)</div>
+    </div>
+    <div class="table-wrap">
+      <table class="schedule-table">
+        <thead>
+          <tr>
+            <th style="width:90px;">เวลา</th>
+            <th style="width:70px;">มื้อ</th>
+            <th>กิจกรรม</th>
+            <th style="width:120px;">ปริมาณ</th>
+            <th>หมายเหตุ</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  let leaveHour = 7, returnHour = 17;
+  if (motherType === 'working') {
+    const lt = document.getElementById('leaveTime').value || '07:00';
+    const rt = document.getElementById('returnTime').value || '17:00';
+    leaveHour = parseInt(lt.split(':')[0]) + parseInt(lt.split(':')[1])/60;
+    returnHour = parseInt(rt.split(':')[0]) + parseInt(rt.split(':')[1])/60;
+  }
+
+  for (let i = 0; i < meals; i++) {
+    const totalHour = (startHour + i * interval) % 24;
+    const h = Math.floor(totalHour);
+    const m = Math.round((totalHour - h) * 60);
+    const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+
+    let feedType, activity, note;
+
+    if (motherType === 'exclusive') {
+      feedType = '<span class="feed-type feed-direct">เข้าเต้า</span>';
+      activity = 'ให้นมจากเต้าทั้ง 2 ข้าง';
+      note = i === 0 ? 'ตื่นเช้า ดูดเต้าให้อิ่ม' :
+             (h >= 22 || h < 6) ? 'มื้อกลางคืน ปลุกถ้าหลับนานเกินไป' :
+             'สลับเต้าซ้าย-ขวา ข้างละ 15-20 นาที';
+    } else {
+      // Working mother
+      if (totalHour < leaveHour || totalHour >= returnHour) {
+        feedType = '<span class="feed-type feed-direct">เข้าเต้า</span>';
+        activity = 'ให้นมจากเต้า';
+        note = totalHour < leaveHour ? 'ก่อนแม่ออกจากบ้าน' : 'แม่กลับมาแล้ว ให้ดูดเต้า';
+      } else {
+        feedType = '<span class="feed-type feed-stored">นมสต็อก</span>';
+        activity = 'ผู้เลี้ยงป้อนนมจากขวด';
+        note = 'นมที่ปั๊มไว้ ละลายและอุ่นก่อนป้อน';
+      }
+    }
+
+    html += `
+      <tr>
+        <td class="time">${timeStr}</td>
+        <td><strong>${i+1}</strong></td>
+        <td>${activity}<br>${feedType}</td>
+        <td><strong>${perMealMl} มล.</strong><br><small>${(perMealMl/30).toFixed(1)} ออนซ์</small></td>
+        <td><small>${note}</small></td>
+      </tr>
+    `;
+  }
+
+  // Add pumping schedule for working mothers
+  if (motherType === 'working') {
+    html += `<tr><td colspan="5" style="background: var(--cream-dark); font-weight: 600; color: var(--sage-700); text-align: center;">📍 ตารางการปั๊มที่ทำงาน</td></tr>`;
+
+    const pumpInterval = 3;
+    let pumpHour = leaveHour + pumpInterval;
+    let pumpNum = 1;
+    while (pumpHour < returnHour) {
+      const ph = Math.floor(pumpHour);
+      const pm = Math.round((pumpHour - ph) * 60);
+      const ts = `${String(ph).padStart(2,'0')}:${String(pm).padStart(2,'0')}`;
+      html += `
+        <tr>
+          <td class="time">${ts}</td>
+          <td><strong>P${pumpNum}</strong></td>
+          <td>ปั๊มนมที่ทำงาน<br><span class="feed-type feed-pump">ปั๊ม</span></td>
+          <td><strong>~${Math.round(perMealMl * 1.2)} มล.</strong><br><small>ปั๊ม 15-20 นาที</small></td>
+          <td><small>เก็บในกระติก/ตู้เย็น</small></td>
+        </tr>
+      `;
+      pumpHour += pumpInterval;
+      pumpNum++;
+    }
+  }
+
+  html += `</tbody></table></div>`;
+
+  // Add summary
+  html += `
+    <div class="alert alert-info" style="margin-top: 20px;">
+      <span class="alert-ico">⏰</span>
+      <div>
+        <strong>หมายเหตุ:</strong> ตารางนี้เป็นแนวทางเริ่มต้น สามารถปรับให้เหมาะกับวงจรการนอนของลูกและตารางครอบครัว สิ่งสำคัญคือ${motherType === 'exclusive' ? 'ให้ลูกดูดเต้าตามต้องการ' : 'รักษารอบการปั๊มให้สม่ำเสมอ'}
+      </div>
+    </div>
+  `;
+
+  document.getElementById('scheduleContent').innerHTML = html;
+}
+
+// ============= RECIPE TOGGLE =============
+function toggleRecipe(btn) {
+  const detail = btn.nextElementSibling;
+  const isShow = detail.classList.contains('show');
+  if (isShow) {
+    detail.classList.remove('show');
+    btn.innerHTML = '▼ ดูวิธีทำและประโยชน์';
+  } else {
+    detail.classList.add('show');
+    btn.innerHTML = '▲ ซ่อนรายละเอียด';
+  }
+}
+
+// ============= PRINT MODAL =============
+function openPrintModal() {
+  // ถ้ายังไม่ได้คำนวณ ให้คำนวณก่อน
+  if (!currentResults) {
+    calculate();
+  }
+  // ตั้งวันที่วันนี้
+  const today = new Date();
+  const dateStr = today.getFullYear() + '-' +
+                  String(today.getMonth()+1).padStart(2,'0') + '-' +
+                  String(today.getDate()).padStart(2,'0');
+  if (!document.getElementById('visitDate').value) {
+    document.getElementById('visitDate').value = dateStr;
+  }
+  document.getElementById('printModal').classList.add('show');
+}
+
+function closePrintModal() {
+  document.getElementById('printModal').classList.remove('show');
+}
+
+// Update doc-option visual when checked
+document.querySelectorAll('.doc-check').forEach(cb => {
+  const updateClass = () => {
+    cb.closest('.doc-option').classList.toggle('checked', cb.checked);
+  };
+  updateClass();
+  cb.addEventListener('change', updateClass);
+});
+
+// ============= EXECUTE PRINT =============
+function executePrint() {
+  if (!currentResults) {
+    calculate();
+  }
+
+  const motherName = document.getElementById('motherName').value || '_____________________';
+  const babyName = document.getElementById('babyName').value || '_____________________';
+  const hnNumber = document.getElementById('hnNumber').value || '_____________________';
+  const visitDate = document.getElementById('visitDate').value;
+  const dateDisplay = visitDate ? formatThaiDate(visitDate) : '____/____/______';
+
+  const selected = Array.from(document.querySelectorAll('.doc-check:checked')).map(cb => cb.value);
+
+  if (selected.length === 0) {
+    alert('กรุณาเลือกเอกสารอย่างน้อย 1 แผ่น');
+    return;
+  }
+
+  const printArea = document.getElementById('printArea');
+  let html = '';
+
+  selected.forEach((docType, idx) => {
+    html += renderPrintHeader(motherName, babyName, hnNumber, dateDisplay, idx + 1, selected.length);
+    if (docType === 'calc')     html += renderCalcPage();
+    if (docType === 'storage')  html += renderStoragePage();
+    if (docType === 'usage')    html += renderUsagePage();
+    if (docType === 'thaifood') html += renderThaiFoodPage();
+    if (docType === 'recipe')   html += renderRecipePage();
+    html += renderPrintFooter();
+    html += '</div>'; // close print-page
+  });
+
+  printArea.innerHTML = html;
+  closePrintModal();
+
+  // Trigger print
+  setTimeout(() => {
+    window.print();
+  }, 300);
+}
+
+function formatThaiDate(dateStr) {
+  const months = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                  'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const d = new Date(dateStr);
+  return d.getDate() + ' ' + months[d.getMonth()] + ' ' + (d.getFullYear() + 543);
+}
+
+function renderPrintHeader(mother, baby, hn, date, page, total) {
+  return `
+    <div class="print-page">
+      <div class="print-header">
+        <div class="logo-area">
+          <div class="logo">🤱</div>
+          <div>
+            <h1>คู่มือการเลี้ยงลูกด้วยนมแม่</h1>
+            <div class="subtitle">โรงพยาบาลส่งเสริมสุขภาพตำบลเกาะแต้ว · คลินิกนมแม่</div>
+          </div>
+        </div>
+        <div class="meta">
+          แผ่นที่ ${page}/${total}<br>
+          วันที่: ${date}
+        </div>
+      </div>
+
+      <div class="patient-info">
+        <div class="info-row">
+          <div><strong>ชื่อ-สกุลแม่:</strong> ${mother}</div>
+          <div><strong>HN:</strong> ${hn}</div>
+        </div>
+        <div class="info-row">
+          <div><strong>ชื่อทารก:</strong> ${baby}</div>
+          <div><strong>โดย:</strong> นายวราชัย บุญเพ็ญ พยาบาลวิชาชีพ</div>
+        </div>
+      </div>
+  `;
+}
+
+function renderPrintFooter() {
+  return `
+    <div class="print-footer">
+      อ้างอิง: กรมอนามัย กระทรวงสาธารณสุข · WHO/UNICEF Breastfeeding Guidelines · ราชวิทยาลัยกุมารแพทย์แห่งประเทศไทย<br>
+      สอบถามเพิ่มเติม: คลินิกนมแม่ รพ.สต.เกาะแต้ว · จัดทำโดย นายวราชัย บุญเพ็ญ พยาบาลวิชาชีพปฏิบัติการ
+    </div>
+  `;
+}
+
+// ===== PAGE 1: CALCULATION =====
+function renderCalcPage() {
+  const r = currentResults;
+  const ageLabel = r.age.label;
+  const dailyOz = (r.dailyMl / 30).toFixed(1);
+  const perOz = (r.perMealMl / 30).toFixed(1);
+  const motherType = r.motherType === 'exclusive' ? 'นมแม่อย่างเดียว (Exclusive Breastfeeding)' : 'แม่ทำงาน (มีสต็อกนม)';
+
+  let html = `
+    <h2>📊 ผลการคำนวณปริมาณน้ำนมเฉพาะตัวลูก</h2>
+
+    <table class="print-table" style="margin-bottom: 10pt;">
+      <tr>
+        <td style="width:30%;"><strong>อายุทารก</strong></td>
+        <td>${ageLabel}</td>
+        <td style="width:30%;"><strong>น้ำหนัก</strong></td>
+        <td>${r.weight} กิโลกรัม</td>
+      </tr>
+      <tr>
+        <td><strong>รูปแบบการให้นม</strong></td>
+        <td colspan="3">${motherType}</td>
+      </tr>
+    </table>
+
+    <div class="print-result-box">
+      <div class="label">ปริมาณน้ำนมที่ทารกควรได้รับต่อวัน</div>
+      <div class="big">${r.dailyMl} มล./วัน</div>
+      <div style="font-size: 11pt; color: #666;">≈ ${dailyOz} ออนซ์ต่อวัน</div>
+    </div>
+
+    <div class="print-stat-row">
+      <div class="print-stat">
+        <div class="lbl">มื้อต่อวัน</div>
+        <div class="val">${r.age.meals}</div>
+      </div>
+      <div class="print-stat">
+        <div class="lbl">ปริมาณ/มื้อ</div>
+        <div class="val">${r.perMealMl} มล.</div>
+      </div>
+      <div class="print-stat">
+        <div class="lbl">≈ ออนซ์/มื้อ</div>
+        <div class="val">${perOz} oz</div>
+      </div>
+      <div class="print-stat">
+        <div class="lbl">ระยะห่าง</div>
+        <div class="val">${r.age.interval} ชม.</div>
+      </div>
+    </div>
+
+    <h3>📅 ตารางการให้นม 24 ชั่วโมง</h3>
+    <table class="print-table">
+      <thead>
+        <tr>
+          <th style="width:15%;">เวลา</th>
+          <th style="width:10%;">มื้อ</th>
+          <th>กิจกรรม</th>
+          <th style="width:18%;">ปริมาณ</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  const startHour = 6;
+  let leaveHour = 7, returnHour = 17;
+  if (r.motherType === 'working') {
+    const lt = document.getElementById('leaveTime').value || '07:00';
+    const rt = document.getElementById('returnTime').value || '17:00';
+    leaveHour = parseInt(lt.split(':')[0]) + parseInt(lt.split(':')[1])/60;
+    returnHour = parseInt(rt.split(':')[0]) + parseInt(rt.split(':')[1])/60;
+  }
+
+  for (let i = 0; i < r.age.meals; i++) {
+    const totalHour = (startHour + i * r.age.interval) % 24;
+    const h = Math.floor(totalHour);
+    const m = Math.round((totalHour - h) * 60);
+    const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+
+    let activity;
+    if (r.motherType === 'exclusive') {
+      activity = 'ให้นมจากเต้า ทั้ง 2 ข้าง ข้างละ 15-20 นาที';
+    } else {
+      if (totalHour < leaveHour || totalHour >= returnHour) {
+        activity = 'ให้นมจากเต้า (แม่อยู่บ้าน)';
+      } else {
+        activity = 'ป้อนนมสต็อก (แม่ไปทำงาน) - ละลาย+อุ่นก่อนป้อน';
+      }
+    }
+
+    html += `
+      <tr>
+        <td><strong>${timeStr}</strong></td>
+        <td style="text-align:center;">${i+1}</td>
+        <td>${activity}</td>
+        <td style="text-align:center;"><strong>${r.perMealMl} มล.</strong></td>
+      </tr>
+    `;
+  }
+
+  html += `</tbody></table>`;
+
+  // Working mother extra info
+  if (r.motherType === 'working') {
+    const awayMin = (returnHour - leaveHour) * 60;
+    const awayHr = (awayMin/60).toFixed(1);
+    const stockMeals = Math.ceil(awayHr / r.age.interval);
+    const stockMl = stockMeals * r.perMealMl;
+    const pumpCount = Math.max(1, Math.floor(awayHr / 3));
+
+    html += `
+      <h3>💼 แผนสำหรับคุณแม่ทำงาน</h3>
+      <div class="print-stat-row">
+        <div class="print-stat">
+          <div class="lbl">เวลาห่างจากลูก</div>
+          <div class="val">${awayHr} ชม.</div>
+        </div>
+        <div class="print-stat">
+          <div class="lbl">มื้อสต็อก</div>
+          <div class="val">${stockMeals}</div>
+        </div>
+        <div class="print-stat">
+          <div class="lbl">ปริมาณสต็อก/วัน</div>
+          <div class="val">${stockMl} มล.</div>
+        </div>
+        <div class="print-stat">
+          <div class="lbl">ปั๊มที่ทำงาน</div>
+          <div class="val">${pumpCount} ครั้ง</div>
+        </div>
+      </div>
+    `;
+  }
+
+  html += `
+    <div class="print-warning">
+      <strong>⚠️ ข้อควรสังเกต:</strong> ค่าที่คำนวณเป็นค่าเฉลี่ย ทารกแต่ละคนมีความต้องการต่างกัน ±2-4 ออนซ์
+      สังเกตน้ำหนักลูกขึ้น 20-60 กรัม/วัน เป็นสัญญาณว่านมพอ • ลูกฉี่อย่างน้อย 6-8 ครั้ง/วัน
+      หากมีข้อสงสัย ปรึกษาคลินิกนมแม่ รพ.สต.เกาะแต้ว
+    </div>
+
+    <h3>📐 สูตรที่ใช้คำนวณ</h3>
+    <table class="print-table">
+      <tr><td><strong>แรกเกิด - 1 เดือน:</strong></td><td>น้ำหนัก × 150 ÷ 30 = ออนซ์/วัน</td></tr>
+      <tr><td><strong>2-6 เดือน:</strong></td><td>น้ำหนัก × 120 ÷ 30 = ออนซ์/วัน</td></tr>
+      <tr><td><strong>6-12 เดือน:</strong></td><td>น้ำหนัก × 110 ÷ 30 + อาหารเสริม</td></tr>
+    </table>
+  `;
+
+  return html;
+}
+
+// ===== PAGE 2: STORAGE =====
+function renderStoragePage() {
+  return `
+    <h2>🧊 ระยะเวลาการเก็บรักษานมแม่</h2>
+    <p style="font-size:10pt; color:#666; margin-bottom:8pt;">อ้างอิง UNICEF, WHO และกรมอนามัย กระทรวงสาธารณสุข</p>
+
+    <div class="print-storage-grid">
+      <div class="print-storage-item">
+        <div class="place">🌡️ อุณหภูมิห้อง (>25°C)</div>
+        <div class="duration">1 ชั่วโมง</div>
+        <div class="note">อากาศร้อนต้องเข้าตู้เย็นทันที</div>
+      </div>
+      <div class="print-storage-item">
+        <div class="place">❄️ ห้องแอร์ (<25°C)</div>
+        <div class="duration">4 ชั่วโมง</div>
+        <div class="note">นมที่จะให้ลูกในมื้อถัดไป</div>
+      </div>
+      <div class="print-storage-item">
+        <div class="place">🧊 กระติกน้ำแข็ง (<15°C)</div>
+        <div class="duration">24 ชั่วโมง</div>
+        <div class="note">ต้องมีน้ำแข็งหล่อตลอด</div>
+      </div>
+      <div class="print-storage-item">
+        <div class="place">🥶 ตู้เย็นช่องธรรมดา (2-4°C)</div>
+        <div class="duration">3-5 วัน</div>
+        <div class="note">เก็บด้านในสุด ไม่เก็บที่ประตู</div>
+      </div>
+      <div class="print-storage-item">
+        <div class="place">🌨️ ช่องแช่แข็ง 1 ประตู (-15°C)</div>
+        <div class="duration">2 สัปดาห์</div>
+        <div class="note">แช่ทันทีหลังปั๊ม</div>
+      </div>
+      <div class="print-storage-item">
+        <div class="place">⛄ ช่องแช่แข็ง 2 ประตู (-18°C)</div>
+        <div class="duration">3 เดือน</div>
+        <div class="note">เก็บด้านในที่อุณหภูมิคงที่</div>
+      </div>
+      <div class="print-storage-item">
+        <div class="place">🏔️ ตู้แช่แข็งเฉพาะ (<-20°C)</div>
+        <div class="duration">6-12 เดือน</div>
+        <div class="note">สำหรับสต็อกระยะยาว</div>
+      </div>
+      <div class="print-storage-item">
+        <div class="place">💧 นมที่ละลายแล้ว (ในตู้เย็น)</div>
+        <div class="duration">24 ชั่วโมง</div>
+        <div class="note">ห้ามนำกลับไปแช่แข็งใหม่</div>
+      </div>
+    </div>
+
+    <h3>📦 7 ขั้นตอนการเก็บนมแม่ที่ถูกต้อง</h3>
+    <ol class="print-tips-list">
+      <li><strong>ล้างมือให้สะอาดทุกครั้ง</strong> ก่อนปั๊มหรือบีบน้ำนม ล้างด้วยสบู่อย่างน้อย 20 วินาที</li>
+      <li><strong>เตรียมภาชนะที่สะอาด</strong> ใช้ถุงเก็บน้ำนม/ขวดแก้วฆ่าเชื้อ แบ่งปริมาณ 1 มื้อ (2-4 ออนซ์)</li>
+      <li><strong>เขียนฉลากให้ชัดเจน</strong> วัน-เดือน-ปี และเวลาที่ปั๊ม หากให้คนอื่นป้อน เขียนชื่อทารกด้วย</li>
+      <li><strong>เหลือพื้นที่ในภาชนะ</strong> ขวด: เหลือ ¼-½ นิ้ว / ถุง: เผื่ออากาศ (นมขยายตัวเมื่อแช่แข็ง)</li>
+      <li><strong>แช่ในส่วนเย็นที่สุด</strong> ด้านในติดช่องแช่แข็ง ห้ามเก็บที่ประตูตู้เย็น</li>
+      <li><strong>แยกจากอาหารอื่น</strong> ป้องกันกลิ่นปนเปื้อนและการปนเปื้อนข้าม ปิดฝาให้สนิท</li>
+      <li><strong>ใช้แบบ FIFO</strong> นมที่ปั๊มก่อนนำมาใช้ก่อน เพื่อไม่ให้หมดอายุ</li>
+    </ol>
+
+    <div class="print-warning">
+      <strong>📋 ข้อห้ามสำคัญ:</strong> นมที่ละลายแล้วห้ามแช่แข็งใหม่ • นมที่ลูกกินแล้วบางส่วนไม่ควรเก็บไว้กินมื้อถัดไป •
+      หลังอุ่นแล้วต้องใช้ภายใน 1-2 ชั่วโมง เหลือต้องทิ้ง
+    </div>
+  `;
+}
+
+// ===== PAGE 3: USAGE =====
+function renderUsagePage() {
+  return `
+    <h2>🍼 ขั้นตอนการนำนมแม่มาใช้งาน</h2>
+
+    <h3>🔥 การละลายนมแช่แข็ง</h3>
+    <ol class="print-tips-list">
+      <li><strong>ย้ายลงช่องเย็นธรรมดา 12 ชั่วโมงก่อนใช้</strong> (วิธีดีที่สุด) ย้ายจาก freezer ลงช่องเย็นค้างคืน นมจะละลายช้าๆ รักษาคุณภาพได้ดีที่สุด</li>
+      <li><strong>หรือแช่ในน้ำอุณหภูมิห้อง/น้ำอุ่น</strong> ไม่ร้อน ประมาณ 10-15 นาที</li>
+      <li><strong>เขย่า/แกว่งเบาๆ ให้เข้ากัน</strong> นมจะแยกชั้น ไขมันลอยด้านบน ห้ามเขย่าแรงเพราะจะทำลายเซลล์ภูมิคุ้มกัน</li>
+      <li><strong>ตรวจสอบอุณหภูมิก่อนป้อน</strong> หยดนมที่หลังมือ ควรอุ่นพอเหมาะหรือเย็นเล็กน้อย ไม่ร้อน</li>
+    </ol>
+
+    <div class="print-warning">
+      <strong>⛔ ห้ามเด็ดขาด:</strong> ละลายนมในน้ำเดือดหรือไมโครเวฟ เพราะจะทำลายเอนไซม์และสารภูมิคุ้มกัน
+      อาจทำให้ลูกถูกลวกจาก hot spot ในนมได้
+    </div>
+
+    <h3>♨️ การอุ่นนมจากตู้เย็น</h3>
+    <ol class="print-tips-list">
+      <li><strong>นำนมออกจากตู้เย็น</strong> แบ่งปริมาณตามที่ลูกจะกินในมื้อนั้น</li>
+      <li><strong>แช่ในน้ำอุ่น</strong> ไม่เกิน 40°C ประมาณ 5-10 นาที หรือใช้เครื่องอุ่นนม</li>
+      <li><strong>ทดสอบอุณหภูมิก่อนป้อน</strong> หยดนมที่ข้อมือ ควรอุ่นพอเหมาะ ไม่ร้อน</li>
+      <li><strong>ป้อนลูกภายใน 1-2 ชั่วโมง</strong> หลังอุ่นแล้ว เหลือต้องทิ้ง ห้ามนำกลับไปแช่</li>
+    </ol>
+
+    <h3>📋 ข้อควรรู้สำคัญ</h3>
+    <ul class="print-tips-list">
+      <li>นมที่ละลายแล้ว <strong>ห้ามนำกลับไปแช่แข็งใหม่</strong> เด็ดขาด</li>
+      <li>นมที่ลูกกินไปแล้วบางส่วน <strong>ไม่ควรเก็บไว้กินมื้อถัดไป</strong> (มีน้ำลายลูกปนเปื้อน)</li>
+      <li>นมแม่อาจมี<strong>กลิ่นเหม็นหืน</strong> จากเอนไซม์ไลเปสในนม ลูกส่วนใหญ่ยังกินได้ปกติ ไม่อันตราย</li>
+      <li>นมที่ละลายแล้วไม่ได้อุ่น <strong>เก็บในตู้เย็นได้ 24 ชั่วโมง</strong></li>
+      <li>นมแม่ <strong>ไม่จำเป็นต้องอุ่นทุกครั้ง</strong> ลูกสามารถกินนมเย็นที่อุณหภูมิห้องได้</li>
+      <li>หากต้องเก็บที่ทำงาน <strong>ใช้กระติกที่มีน้ำแข็งหล่อตลอด</strong> เพื่อนำกลับบ้าน</li>
+    </ul>
+
+    <h3>⚠️ สัญญาณที่ต้องระวัง</h3>
+    <ul class="print-tips-list">
+      <li>ลูกน้ำหนักขึ้น <strong>น้อยกว่า 600 กรัม/เดือน</strong> ในช่วง 4 เดือนแรก = อาจได้นมไม่พอ</li>
+      <li>ลูกฉี่ <strong>น้อยกว่า 6 ครั้ง/วัน</strong> หรือปัสสาวะสีเข้ม = อาจขาดน้ำ</li>
+      <li>คุณแม่มี <strong>ไข้ คัดเต้าจัด เจ็บปวด</strong> = อาจเป็นเต้านมอักเสบ พบแพทย์ทันที</li>
+      <li>ลูกน้ำหนักขึ้น <strong>เร็วเกิน 60 กรัม/วัน</strong> = อาจ overfeeding</li>
+    </ul>
+  `;
+}
+
+// ===== PAGE 4: THAI FOOD =====
+function renderThaiFoodPage() {
+  return `
+    <h2>🌿 อาหารไทยเพิ่มน้ำนมแม่</h2>
+    <p style="font-size:10pt; color:#666; margin-bottom:8pt;">"อาหารเป็นยา" ภูมิปัญญาไทย • อาหารฤทธิ์ร้อนกระตุ้นการสร้างน้ำนม</p>
+
+    <h3>🌺 9 สมุนไพร/ผักเพิ่มน้ำนมที่ควรกิน</h3>
+    <div class="print-herbs-grid">
+      <div class="print-herb">
+        <div class="name">🌺 หัวปลี (ปลีกล้วย)</div>
+        <div class="desc">มีสาร Lactagogum กระตุ้น Prolactin/Oxytocin แคลเซียมสูงกว่ากล้วย 4 เท่า<br><em>เมนู: แกงเลียงหัวปลี, ยำหัวปลีกุ้ง, ทอดมัน</em></div>
+      </div>
+      <div class="print-herb">
+        <div class="name">🌱 ขิง</div>
+        <div class="desc">เพิ่มไหลเวียนเลือด น้ำนมไหลดี ขับลม แก้ท้องอืด ฤทธิ์ร้อน<br><em>เมนู: ไก่ผัดขิง, ปลานึ่งขิง, น้ำขิง, บัวลอยน้ำขิง</em></div>
+      </div>
+      <div class="print-herb">
+        <div class="name">🌿 ใบกะเพรา</div>
+        <div class="desc">ฤทธิ์ร้อน เพิ่มน้ำนม แก้ท้องอืดทั้งแม่และลูก<br><em>เมนู: ผัดกะเพรา (พริกไทยอ่อน), แกงป่า</em></div>
+      </div>
+      <div class="print-herb">
+        <div class="name">🥬 ตำลึง</div>
+        <div class="desc">บำรุงน้ำนมและบำรุงเลือดหลังคลอด ธาตุเหล็กสูง<br><em>เมนู: ต้มจืดตำลึง, แกงเลียง, ตำลึงผัดน้ำมันหอย</em></div>
+      </div>
+      <div class="print-herb">
+        <div class="name">🥒 กุยช่าย</div>
+        <div class="desc">บำรุงน้ำนมโดยตรง ใช้ทั้งต้นและใบ ฤทธิ์อบอุ่น<br><em>เมนู: ผัดกุยช่ายตับ, ผัดกุยช่ายไข่, ขนมกุยช่าย</em></div>
+      </div>
+      <div class="print-herb">
+        <div class="name">🎃 ฟักทอง</div>
+        <div class="desc">วิตามิน A สูง บำรุงสายตา เบต้าแคโรทีนสูง<br><em>เมนู: แกงเลียงฟักทอง, ผัดไข่, นึ่ง, บวด</em></div>
+      </div>
+      <div class="print-herb">
+        <div class="name">🌶️ พริกไทย</div>
+        <div class="desc">ฤทธิ์ร้อน กระตุ้นไหลเวียนเลือด ใช้แทนพริกขี้หนู<br><em>เมนู: ต้มจืดพริกไทย, ผัดพริกไทยอ่อน</em></div>
+      </div>
+      <div class="print-herb">
+        <div class="name">🌿 ใบแมงลัก</div>
+        <div class="desc">คล้ายกะเพราแต่หอม ฤทธิ์ร้อน ขับลม<br><em>เมนู: แกงเลียงใส่แมงลัก, ขนมจีนน้ำยา</em></div>
+      </div>
+      <div class="print-herb">
+        <div class="name">🍈 มะละกอดิบ</div>
+        <div class="desc">เอนไซม์ Papain กระตุ้นการสร้างน้ำนม<br><em>เมนู: แกงส้มมะละกอ, ต้มไก่มะละกอ</em></div>
+      </div>
+    </div>
+
+    <h3>🍱 ตัวอย่างเมนู 1 วัน (6 มื้อ)</h3>
+    <div class="print-meal-grid">
+      <div class="print-meal">
+        <div class="time">⏰ 07:00 มื้อเช้า</div>
+        <ul>
+          <li>• ข้าวต้มปลาใส่ขิง</li>
+          <li>• ไข่ต้มสุก 1 ฟอง</li>
+          <li>• น้ำขิงอุ่น 1 แก้ว</li>
+          <li>• กล้วยน้ำว้า 1 ผล</li>
+        </ul>
+      </div>
+      <div class="print-meal">
+        <div class="time">⏰ 10:00 ว่างเช้า</div>
+        <ul>
+          <li>• ฟักทองนึ่ง</li>
+          <li>• นมจืด 1 แก้ว</li>
+          <li>• ถั่วเขียวต้มน้ำขิง</li>
+        </ul>
+      </div>
+      <div class="print-meal">
+        <div class="time">⏰ 12:00 กลางวัน</div>
+        <ul>
+          <li>• <strong>แกงเลียงหัวปลีกุ้ง</strong></li>
+          <li>• ปลานึ่งมะนาว</li>
+          <li>• ผัดผักรวมน้ำมันหอย</li>
+          <li>• ข้าวสวย</li>
+        </ul>
+      </div>
+      <div class="print-meal">
+        <div class="time">⏰ 15:00 ว่างบ่าย</div>
+        <ul>
+          <li>• บัวลอยน้ำขิง</li>
+          <li>• มะละกอสุก</li>
+          <li>• น้ำใบเตยอุ่น</li>
+        </ul>
+      </div>
+      <div class="print-meal">
+        <div class="time">⏰ 18:00 มื้อเย็น</div>
+        <ul>
+          <li>• <strong>ต้มจืดตำลึงหมูสับ</strong></li>
+          <li>• ไก่ผัดขิง</li>
+          <li>• ผัดกุยช่ายตับ</li>
+          <li>• ข้าวสวย</li>
+        </ul>
+      </div>
+      <div class="print-meal">
+        <div class="time">⏰ 21:00 ก่อนนอน</div>
+        <ul>
+          <li>• นมอุ่น 1 แก้ว</li>
+          <li>• กล้วยหอม 1 ผล</li>
+          <li>• น้ำขิงอุ่น</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>⛔ อาหารที่ควรหลีกเลี่ยง</h3>
+    <table class="print-table" style="font-size:9pt;">
+      <tr>
+        <td><strong>☕ กาแฟ/ชาเข้ม</strong> — คาเฟอีนผ่านน้ำนม ลูกนอนไม่หลับ</td>
+        <td><strong>🍺 แอลกอฮอล์</strong> — ห้ามเด็ดขาด กระทบสมองลูก</td>
+      </tr>
+      <tr>
+        <td><strong>🥶 น้ำเย็น/น้ำแข็ง</strong> — ภูมิปัญญาไทย: ทำให้น้ำนมไม่ไหล</td>
+        <td><strong>🥬 ผักชี/สะระแหน่</strong> — มีฤทธิ์ลดน้ำนม</td>
+      </tr>
+      <tr>
+        <td><strong>🌶️ เผ็ดจัด</strong> — ลูกแสบท้อง ใช้พริกไทยอ่อนแทน</td>
+        <td><strong>🥒 ของหมักดอง</strong> — เสี่ยงเชื้อโรค</td>
+      </tr>
+    </table>
+
+    <div class="print-warning">
+      <strong>🎋 ภูมิปัญญาไทย:</strong> "อยู่ไฟ" หลังคลอด ดื่มน้ำสมุนไพรอุ่นๆ (น้ำขิง น้ำใบเตย) นวดเต้านมด้วยน้ำมันมะพร้าวก่อนให้นม
+      ดื่มน้ำอย่างน้อย 8-10 แก้ว/วัน นอนพักเยอะๆ
+    </div>
+  `;
+}
+
+// ===== PAGE 5: RECIPES =====
+function renderRecipePage() {
+  return `
+    <h2>📖 สูตรอาหารเพิ่มน้ำนม (เมนูชูโรง)</h2>
+
+    <h3>🍲 แกงเลียงหัวปลีกุ้งสด</h3>
+    <p style="font-size:10pt; color:#666;">⏱️ 30 นาที · 🍽️ 3-4 ที่ · 🌿 รวมสมุนไพร 5 ชนิด</p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 14pt; margin-top: 8pt;">
+      <div>
+        <div style="font-size:11pt; font-weight:600; color:#3d5a32; margin-bottom:6pt;">🥘 วัตถุดิบ</div>
+        <ul class="print-tips-list" style="font-size:10pt;">
+          <li>หัวปลี 1 หัว (ลอกเปลือกนอก หั่นบาง แช่น้ำมะนาว)</li>
+          <li>กุ้งสด 200 กรัม</li>
+          <li>ฟักทอง 200 กรัม (หั่นชิ้นพอคำ)</li>
+          <li>ใบตำลึง 1 กำมือ</li>
+          <li>ใบแมงลัก ½ ถ้วย</li>
+          <li>หอมแดง 5 หัว</li>
+          <li>พริกไทยขาว 1 ช้อนชา</li>
+          <li>กะปิ 1 ช้อนโต๊ะ</li>
+          <li>กุ้งแห้ง 2 ช้อนโต๊ะ</li>
+          <li>น้ำสะอาด 4 ถ้วย</li>
+          <li>น้ำปลา 1-2 ช้อนโต๊ะ</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:11pt; font-weight:600; color:#3d5a32; margin-bottom:6pt;">👩‍🍳 วิธีทำ</div>
+        <ol class="print-tips-list" style="font-size:10pt;">
+          <li><strong>โขลกเครื่องแกง</strong> โขลกหอมแดง พริกไทย กะปิ กุ้งแห้ง ให้ละเอียด</li>
+          <li><strong>ต้มน้ำเดือด</strong> ใส่เครื่องแกงโขลก คนให้ละลาย รอเดือด</li>
+          <li><strong>ใส่หัวปลีและฟักทอง</strong> ต้มจนสุก 5-7 นาที</li>
+          <li><strong>ใส่กุ้งสด</strong> ต้มจนกุ้งสุกเปลี่ยนสี ปรุงรสด้วยน้ำปลา</li>
+          <li><strong>ใส่ผัก</strong> ใส่ใบตำลึงและใบแมงลัก ปิดเตาทันที พร้อมเสิร์ฟร้อนๆ</li>
+        </ol>
+        <div class="print-warning" style="margin-top:8pt; font-size:9pt;">
+          <strong>💪 ประโยชน์:</strong> รวม 5 สมุนไพรเพิ่มน้ำนม (หัวปลี + ฟักทอง + ตำลึง + ใบแมงลัก + พริกไทย) กระตุ้น Prolactin/Oxytocin
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 16pt;">☕ น้ำขิงอุ่นบำรุงน้ำนม</h3>
+    <p style="font-size:10pt; color:#666;">⏱️ 15 นาที · 🍽️ 4 แก้ว · ดื่มได้ทุกวัน</p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 14pt; margin-top: 8pt;">
+      <div>
+        <div style="font-size:11pt; font-weight:600; color:#3d5a32; margin-bottom:6pt;">🥘 วัตถุดิบ</div>
+        <ul class="print-tips-list" style="font-size:10pt;">
+          <li>ขิงแก่ 100 กรัม (ทุบให้แตก ไม่ปอกเปลือก)</li>
+          <li>น้ำตาลทรายแดง/โตนด 3 ช้อนโต๊ะ</li>
+          <li>น้ำสะอาด 1 ลิตร</li>
+          <li>เกลือเล็กน้อย</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:11pt; font-weight:600; color:#3d5a32; margin-bottom:6pt;">👩‍🍳 วิธีทำ</div>
+        <ol class="print-tips-list" style="font-size:10pt;">
+          <li><strong>ล้างขิง</strong> ทุบให้แตก ไม่ต้องปอกเปลือก (เปลือกมีสารอาหารมาก)</li>
+          <li><strong>ต้ม</strong> ใส่ขิงทุบในน้ำเดือด ต้ม 10 นาทีไฟกลาง</li>
+          <li><strong>ปรุงรส</strong> ใส่น้ำตาลและเกลือเล็กน้อย คนให้ละลาย</li>
+          <li><strong>กรองและเสิร์ฟ</strong> กรองเอาเฉพาะน้ำ ดื่มอุ่นๆ วันละ 2-3 แก้ว</li>
+        </ol>
+        <div class="print-warning" style="margin-top:8pt; font-size:9pt;">
+          <strong>⏰ เวลาดีที่สุด:</strong> ดื่มหลังตื่นนอน ก่อนให้นมลูก 30 นาที กระตุ้นการไหลของน้ำนม
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 16pt;">🍜 ต้มจืดตำลึงหมูสับ (บำรุงเลือดหลังคลอด)</h3>
+    <p style="font-size:10pt; color:#666;">⏱️ 20 นาที · 🍽️ 3-4 ที่ · เหมาะแม่ 1-3 เดือนแรก</p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 14pt; margin-top: 8pt;">
+      <div>
+        <div style="font-size:11pt; font-weight:600; color:#3d5a32; margin-bottom:6pt;">🥘 วัตถุดิบ</div>
+        <ul class="print-tips-list" style="font-size:10pt;">
+          <li>ใบตำลึง 2 กำมือ (เด็ดใบ ล้างสะอาด)</li>
+          <li>หมูสับ 200 กรัม</li>
+          <li>เต้าหู้ขาวอ่อน 1 หลอด (หั่นชิ้นเล็ก)</li>
+          <li>กระเทียมสับ 1 ช้อนโต๊ะ</li>
+          <li>พริกไทยป่น ½ ช้อนชา</li>
+          <li>น้ำซุปกระดูกหมู 4 ถ้วย</li>
+          <li>ซีอิ๊วขาว 1 ช้อนโต๊ะ + เกลือ + ต้นหอมซอย</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:11pt; font-weight:600; color:#3d5a32; margin-bottom:6pt;">👩‍🍳 วิธีทำ</div>
+        <ol class="print-tips-list" style="font-size:10pt;">
+          <li><strong>ปรุงหมูสับ</strong> คลุกหมูกับกระเทียมและพริกไทยป่น พักไว้ 10 นาที</li>
+          <li><strong>ต้มน้ำซุป</strong> ตั้งไฟกลางจนเดือด</li>
+          <li><strong>ปั้นหมูเป็นก้อน</strong> ใช้ช้อนตักเป็นก้อนกลม ใส่ในน้ำซุป</li>
+          <li><strong>ใส่เต้าหู้</strong> ต้ม 5 นาทีให้หมูสุก ปรุงรส</li>
+          <li><strong>ใส่ใบตำลึง</strong> ปิดไฟทันที โรยต้นหอม พร้อมเสิร์ฟ</li>
+        </ol>
+        <div class="print-warning" style="margin-top:8pt; font-size:9pt;">
+          <strong>🩸 ประโยชน์:</strong> ตำลึงและหมูบำรุงเลือดที่เสียจากการคลอด ธาตุเหล็กสูง โปรตีนซ่อมแซมร่างกาย
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Auto-calculate on load
+window.addEventListener('DOMContentLoaded', () => {
+  calculate();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "เครื่องคำนวณน้ำนมแม่ รพ.สต.เกาะแต้ว",
+  "short_name": "นมแม่",
+  "description": "คำนวณน้ำนมแม่ 0-2 ปี ตารางให้นม การเก็บนม นวดกระตุ้นน้ำนม อาหารไทย และเมนูอาหารเด็ก ใช้งานออฟไลน์ได้",
+  "lang": "th",
+  "dir": "ltr",
+  "id": "./",
+  "start_url": "./index.html?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#fef9f3",
+  "theme_color": "#d05a4d",
+  "categories": ["health", "medical", "lifestyle"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
